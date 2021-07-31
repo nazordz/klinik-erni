@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+"-//Hibernate/Hibernate Mapping DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd"> 
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<hibernate-mapping>
+    <class name="com.mycompany.maven.app.model.Patient" table="patients">
+        <id name="id" type="string" length="36" column="id">
+            <generator class="org.hibernate.id.UUIDGenerator"/>
+        </id>
+        <property name="patientNumber" type="string" column="patient_number"/>
+        <property name="name" type="string" column="name" />
+        <property name="birthDate" type="date" column="birth_date" />
+        <property name="bloodType" type="string" column="blood_type" />
+        <property name="gender" type="string" column="gender" />
+        <property name="address" type="text" column="address"/>
+        <property name="createdAt" type="timestamp" column="created_at" update="false" insert="false" generated="insert"/>
+        <property name="updatedAt" type="timestamp" column="updated_at" update="false" insert="false" generated="always"/>
+    </class>
+</hibernate-mapping>

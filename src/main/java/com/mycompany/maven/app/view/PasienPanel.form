@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <Properties>
+    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="e9" green="e6" red="df" type="rgb"/>
+    </Property>
+  </Properties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,98,0,0,2,50"/>
+  </AuxValues>
+
+  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="ButtonGroup">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="First"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+        <Property name="alignment" type="int" value="2"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="Refresh">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Refresh"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RefreshActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="Remove">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Hapus yang dipilih"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RemoveMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RemoveActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="Add">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Tambah Patient"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="TableWrapper">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="Center"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
+        <Property name="horizontalGap" type="int" value="5"/>
+        <Property name="verticalGap" type="int" value="5"/>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Center"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="TablePasien">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="8" rowCount="4">
+                    <Column editable="true" title="id" type="java.lang.String"/>
+                    <Column editable="true" title="No Pasien" type="java.lang.String"/>
+                    <Column editable="true" title="Nama" type="java.lang.String"/>
+                    <Column editable="true" title="Tgl Lahir" type="java.lang.String"/>
+                    <Column editable="true" title="Gol Darah" type="java.lang.String"/>
+                    <Column editable="true" title="Jenis Kel" type="java.lang.String"/>
+                    <Column editable="true" title="Alamat" type="java.lang.String"/>
+                    <Column editable="false" title="dibuat" type="java.lang.Object"/>
+                  </Table>
+                </Property>
+                <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                  <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                  </TableColumnModel>
+                </Property>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TablePasienMouseClicked"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="DateFormat df = new SimpleDateFormat(&quot;dd-MM-yyyy&quot;);&#xa;TablePasien.setDefaultEditor(LocalDate.class, new DatePickerCellEditor(df));&#xa;TablePasien.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent e) {&#xa;        int firstRow = e.getFirstRow();&#xa;        int lastRow = e.getLastRow();&#xa;        int index = e.getColumn();&#xa;        switch (e.getType()) {&#xa;            case TableModelEvent.INSERT:&#xa;                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;//                  System.out.println(i);&#xa;                }&#xa;                break;&#xa;            case TableModelEvent.UPDATE:&#xa;                if (firstRow == TableModelEvent.HEADER_ROW) {&#xa;                  if (index == TableModelEvent.ALL_COLUMNS) {&#xa;                    System.out.println(&quot;A column was added&quot;);&#xa;                  } else {&#xa;                    System.out.println(index + &quot;in header changed&quot;);&#xa;                  }&#xa;                } else {&#xa;                  for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;                    if (index == TableModelEvent.ALL_COLUMNS) {&#xa;                      System.out.println(&quot;All columns have changed&quot;);&#xa;                    } else {&#xa;//                      System.out.println(&quot;Baris-&quot;+ i + &quot; .Kolom-&quot; + index);&#xa;                        updateTable(i, index);&#xa;                    }&#xa;                  }&#xa;                }&#xa;                break;&#xa;            case TableModelEvent.DELETE:&#xa;                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;                  System.out.println(i);&#xa;                }&#xa;                break;&#xa;        }&#xa;    }&#xa;});&#xa;&#xa;TableColumn column = TablePasien.getColumnModel().getColumn(3);&#xa;&#xa;DateCellRenderer renderer = new DateCellRenderer();&#xa;column.setCellEditor(TablePasien.getDefaultEditor(LocalDate.class));&#xa;//column.setCellRenderer(TablePasien.getDefaultRenderer(LocalDate.class));&#xa;column.setCellRenderer(renderer);&#xa;&#xa;TableColumn bloodColumn = TablePasien.getColumnModel().getColumn(4);&#xa;JComboBox comboBox = new JComboBox();&#xa;comboBox.addItem(&quot;A&quot;);&#xa;comboBox.addItem(&quot;B&quot;);&#xa;comboBox.addItem(&quot;AB&quot;);&#xa;comboBox.addItem(&quot;O&quot;);&#xa;bloodColumn.setCellEditor(new DefaultCellEditor(comboBox));&#xa;&#xa;TableColumn genderColumn = TablePasien.getColumnModel().getColumn(5);&#xa;&#xa;JComboBox genderComboBox = new JComboBox();&#xa;genderComboBox.addItem(&quot;Pria&quot;);&#xa;genderComboBox.addItem(&quot;Wanita&quot;);&#xa;genderColumn.setCellEditor(new DefaultCellEditor(genderComboBox));&#xa;&#xa;TablePasien.removeColumn(TablePasien.getColumnModel().getColumn(0));"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
