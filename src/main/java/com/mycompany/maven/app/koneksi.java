@@ -24,7 +24,7 @@ public class koneksi {
         }
         String url = "jdbc:mysql://localhost:3306/db_klinik";
         try {
-            con = DriverManager.getConnection(url, "root","adb3l1cak");
+            con = DriverManager.getConnection(url, "root","");
             System.out.println("Koneksi Database Berhasil");
         } catch (SQLException e) {
             System.out.println("Gagal Koneksi Database");
