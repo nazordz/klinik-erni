@@ -5,6 +5,9 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="e9" green="e6" red="df" type="rgb"/>
     </Property>
+    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[452, 735]"/>
+    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -16,47 +19,274 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,98,0,0,2,50"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,-94,0,0,2,-110"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="ButtonGroup">
+    <Container class="javax.swing.JPanel" name="Form">
+      <Properties>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[355, 233]"/>
+        </Property>
+      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
           <BorderConstraints direction="First"/>
         </Constraint>
       </Constraints>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
-        <Property name="alignment" type="int" value="2"/>
-      </Layout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="Refresh">
+        <Container class="javax.swing.JPanel" name="InputGroup">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Refresh"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[331, 190]"/>
+            </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RefreshActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="Remove">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Hapus yang dipilih"/>
-          </Properties>
-          <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RemoveMouseClicked"/>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RemoveActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="Add">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Tambah Patient"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddActionPerformed"/>
-          </Events>
-        </Component>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="First"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="321" pref="321" max="-2" attributes="0"/>
+                              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="24" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="NoPatientField" max="32767" attributes="0"/>
+                                  <Component id="NameField" max="32767" attributes="0"/>
+                                  <Component id="DateBirthField" pref="150" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="BloodTypeField" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="ManRadio" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                                      <Component id="WomenRadio" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                                      <Component id="jScrollPane2" min="-2" pref="213" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace pref="64" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
+                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="NoPatientField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="BloodTypeField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="NameField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ManRadio" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="WomenRadio" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="DateBirthField" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jScrollPane2" alignment="0" min="-2" pref="73" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="26" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JPanel" name="jPanel1">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+            </Container>
+            <Component class="javax.swing.JLabel" name="jLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="No. Pasien"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="NoPatientField">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="NoPatientFieldActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Nama"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="NameField">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="NameFieldActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Tgl Lahir"/>
+              </Properties>
+            </Component>
+            <Component class="com.toedter.calendar.JDateChooser" name="DateBirthField">
+              <Properties>
+                <Property name="dateFormatString" type="java.lang.String" value="dd-MM-YYYY"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel4">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Gol Darah"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="BloodTypeField">
+              <Properties>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="4">
+                    <StringItem index="0" value="A"/>
+                    <StringItem index="1" value="B"/>
+                    <StringItem index="2" value="AB"/>
+                    <StringItem index="3" value="O"/>
+                  </StringArray>
+                </Property>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel5">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Jenis Kel"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="ManRadio">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Pria"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="WomenRadio">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Wanita"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="WomenRadioActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel6">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Alamat"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTextArea" name="AddressField">
+                  <Properties>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="rows" type="int" value="5"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="ButtonGroup">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Center"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+            <Property name="alignment" type="int" value="2"/>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JButton" name="ResetForm">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reset Form"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ResetFormActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="Refresh">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Refresh"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RefreshActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="Checkup">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Chekup Pasien"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CheckupActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="Checkup.setVisible(false);"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="Remove">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Hapus pasien"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RemoveMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RemoveActionPerformed"/>
+              </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_ListenersCodePost" type="java.lang.String" value="Remove.setVisible(false);"/>
+              </AuxValues>
+            </Component>
+            <Component class="javax.swing.JButton" name="Add">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Simpan"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="TableWrapper">
@@ -87,13 +317,13 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="8" rowCount="4">
-                    <Column editable="true" title="id" type="java.lang.String"/>
-                    <Column editable="true" title="No Pasien" type="java.lang.String"/>
-                    <Column editable="true" title="Nama" type="java.lang.String"/>
-                    <Column editable="true" title="Tgl Lahir" type="java.lang.String"/>
-                    <Column editable="true" title="Gol Darah" type="java.lang.String"/>
-                    <Column editable="true" title="Jenis Kel" type="java.lang.String"/>
-                    <Column editable="true" title="Alamat" type="java.lang.String"/>
+                    <Column editable="false" title="id" type="java.lang.String"/>
+                    <Column editable="false" title="No Pasien" type="java.lang.String"/>
+                    <Column editable="false" title="Nama" type="java.lang.String"/>
+                    <Column editable="false" title="Tgl Lahir" type="java.lang.String"/>
+                    <Column editable="false" title="Gol Darah" type="java.lang.String"/>
+                    <Column editable="false" title="Jenis Kel" type="java.lang.String"/>
+                    <Column editable="false" title="Alamat" type="java.lang.String"/>
                     <Column editable="false" title="dibuat" type="java.lang.Object"/>
                   </Table>
                 </Property>
@@ -149,7 +379,7 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TablePasienMouseClicked"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="DateFormat df = new SimpleDateFormat(&quot;dd-MM-yyyy&quot;);&#xa;TablePasien.setDefaultEditor(LocalDate.class, new DatePickerCellEditor(df));&#xa;TablePasien.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent e) {&#xa;        int firstRow = e.getFirstRow();&#xa;        int lastRow = e.getLastRow();&#xa;        int index = e.getColumn();&#xa;        switch (e.getType()) {&#xa;            case TableModelEvent.INSERT:&#xa;                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;//                  System.out.println(i);&#xa;                }&#xa;                break;&#xa;            case TableModelEvent.UPDATE:&#xa;                if (firstRow == TableModelEvent.HEADER_ROW) {&#xa;                  if (index == TableModelEvent.ALL_COLUMNS) {&#xa;                    System.out.println(&quot;A column was added&quot;);&#xa;                  } else {&#xa;                    System.out.println(index + &quot;in header changed&quot;);&#xa;                  }&#xa;                } else {&#xa;                  for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;                    if (index == TableModelEvent.ALL_COLUMNS) {&#xa;                      System.out.println(&quot;All columns have changed&quot;);&#xa;                    } else {&#xa;//                      System.out.println(&quot;Baris-&quot;+ i + &quot; .Kolom-&quot; + index);&#xa;                        updateTable(i, index);&#xa;                    }&#xa;                  }&#xa;                }&#xa;                break;&#xa;            case TableModelEvent.DELETE:&#xa;                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;                  System.out.println(i);&#xa;                }&#xa;                break;&#xa;        }&#xa;    }&#xa;});&#xa;&#xa;TableColumn column = TablePasien.getColumnModel().getColumn(3);&#xa;&#xa;DateCellRenderer renderer = new DateCellRenderer();&#xa;column.setCellEditor(TablePasien.getDefaultEditor(LocalDate.class));&#xa;//column.setCellRenderer(TablePasien.getDefaultRenderer(LocalDate.class));&#xa;column.setCellRenderer(renderer);&#xa;&#xa;TableColumn bloodColumn = TablePasien.getColumnModel().getColumn(4);&#xa;JComboBox comboBox = new JComboBox();&#xa;comboBox.addItem(&quot;A&quot;);&#xa;comboBox.addItem(&quot;B&quot;);&#xa;comboBox.addItem(&quot;AB&quot;);&#xa;comboBox.addItem(&quot;O&quot;);&#xa;bloodColumn.setCellEditor(new DefaultCellEditor(comboBox));&#xa;&#xa;TableColumn genderColumn = TablePasien.getColumnModel().getColumn(5);&#xa;&#xa;JComboBox genderComboBox = new JComboBox();&#xa;genderComboBox.addItem(&quot;Pria&quot;);&#xa;genderComboBox.addItem(&quot;Wanita&quot;);&#xa;genderColumn.setCellEditor(new DefaultCellEditor(genderComboBox));&#xa;&#xa;TablePasien.removeColumn(TablePasien.getColumnModel().getColumn(0));"/>
+                <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="DateFormat df = new SimpleDateFormat(&quot;dd-MM-yyyy&quot;);&#xa;//TablePasien.setDefaultEditor(LocalDate.class, new DatePickerCellEditor(df));&#xa;//TablePasien.getModel().addTableModelListener(new TableModelListener() {&#xa;//    public void tableChanged(TableModelEvent e) {&#xa;//        int firstRow = e.getFirstRow();&#xa;//        int lastRow = e.getLastRow();&#xa;//        int index = e.getColumn();&#xa;//        switch (e.getType()) {&#xa;//            case TableModelEvent.INSERT:&#xa;//                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;////                  System.out.println(i);&#xa;//                }&#xa;//                break;&#xa;//            case TableModelEvent.UPDATE:&#xa;//                if (firstRow == TableModelEvent.HEADER_ROW) {&#xa;//                  if (index == TableModelEvent.ALL_COLUMNS) {&#xa;//                    System.out.println(&quot;A column was added&quot;);&#xa;//                  } else {&#xa;//                    System.out.println(index + &quot;in header changed&quot;);&#xa;//                  }&#xa;//                } else {&#xa;//                  for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;//                    if (index == TableModelEvent.ALL_COLUMNS) {&#xa;//                      System.out.println(&quot;All columns have changed&quot;);&#xa;//                    } else {&#xa;////                      System.out.println(&quot;Baris-&quot;+ i + &quot; .Kolom-&quot; + index);&#xa;//                        updateTable(i, index);&#xa;//                    }&#xa;//                  }&#xa;//                }&#xa;//                break;&#xa;//            case TableModelEvent.DELETE:&#xa;//                for (int i = firstRow; i &lt;= lastRow; i++) {&#xa;//                  System.out.println(i);&#xa;//                }&#xa;//                break;&#xa;//        }&#xa;//    }&#xa;//});&#xa;//&#xa;TableColumn column = TablePasien.getColumnModel().getColumn(3);&#xa;&#xa;DateCellRenderer renderer = new DateCellRenderer();&#xa;//column.setCellEditor(TablePasien.getDefaultEditor(LocalDate.class));&#xa;//column.setCellRenderer(TablePasien.getDefaultRenderer(Date.class));&#xa;//column.setCellRenderer(renderer);&#xa;//&#xa;//TableColumn bloodColumn = TablePasien.getColumnModel().getColumn(4);&#xa;//JComboBox comboBox = new JComboBox();&#xa;//comboBox.addItem(&quot;A&quot;);&#xa;//comboBox.addItem(&quot;B&quot;);&#xa;//comboBox.addItem(&quot;AB&quot;);&#xa;//comboBox.addItem(&quot;O&quot;);&#xa;//bloodColumn.setCellEditor(new DefaultCellEditor(comboBox));&#xa;//&#xa;//TableColumn genderColumn = TablePasien.getColumnModel().getColumn(5);&#xa;//&#xa;//JComboBox genderComboBox = new JComboBox();&#xa;//genderComboBox.addItem(&quot;Pria&quot;);&#xa;//genderComboBox.addItem(&quot;Wanita&quot;);&#xa;//genderColumn.setCellEditor(new DefaultCellEditor(genderComboBox));&#xa;&#xa;TablePasien.removeColumn(TablePasien.getColumnModel().getColumn(0));"/>
               </AuxValues>
             </Component>
           </SubComponents>

@@ -48,8 +48,8 @@ Contributor(s):
     <property name="hibernate.connection.password">adb3l1cak</property>
     <!--<propperty name="hibernate.jdbc.time_zone">UTC</propperty>-->
     <!--annotation-->
-    <!--<mapping class="com.odeng.maven.crud.hibernate.entitas.Mahasiswa"/>-->
-    
+    <mapping class="com.mycompany.maven.app.model.PatientCheckup"/>
+    <mapping class="com.mycompany.maven.app.model.Doctor"/>
     <!--mapping files-->
     <mapping resource="Patient.hbm.xml" />
   </session-factory>

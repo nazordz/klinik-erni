@@ -7,40 +7,27 @@ package com.mycompany.maven.app;
 
 import com.mycompany.maven.app.dao.PatientDAO;
 import com.mycompany.maven.app.model.Patient;
-import com.mycompany.maven.app.util.HibernateUtil;
-import com.mycompany.maven.app.view.PasienFormFrame;
-import com.mycompany.maven.app.view.PasienPanel;
 import java.util.List;
-import javax.swing.JFrame;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 /**
  *
  * @author mac
  */
 public class ManagePatient implements PatientDAO {
-    private Session session;
-//    private Transaction trans;
+    private static SessionFactory factory; 
     
     public ManagePatient() {
-        this.session = HibernateUtil.getSessionFactory().openSession();
-//        this.trans = session.beginTransaction();
-    }
-
-    public void openForm() {
-        JFrame form = new PasienFormFrame();
-        form.setVisible(true);
-    }
-    
-    public void refreshTable() {
-        PasienPanel panel = new PasienPanel();
-        panel.getDataTable();
+        factory = new Configuration().configure().buildSessionFactory();
     }
     
     @Override
     public boolean insert(Patient p) {
         Transaction tx = null;
+        Session session = factory.openSession();
         try {
             tx = session.beginTransaction();
             session.save(p);
@@ -58,9 +45,10 @@ public class ManagePatient implements PatientDAO {
 
     @Override
     public boolean update(Patient p) {
+        Session session = factory.openSession();
+
         try {
-            Session sesi = HibernateUtil.getSessionFactory().openSession();
-            Transaction tx = sesi.beginTransaction();
+            Transaction tx = session.beginTransaction();
             session.update(p);
             tx.commit();
         } catch (HibernateException e) {
@@ -75,6 +63,8 @@ public class ManagePatient implements PatientDAO {
 
     @Override
     public boolean delete(String id) {
+        Session session = factory.openSession();
+
         try {
             Transaction tx = session.beginTransaction();
             Patient patient = (Patient) session.get(Patient.class, id);
@@ -92,6 +82,7 @@ public class ManagePatient implements PatientDAO {
 
     @Override
     public Patient getPatientById(String id) {
+        Session session = factory.openSession();
         Patient patient = null;
         try {
             Transaction tx = session.beginTransaction();
@@ -109,8 +100,13 @@ public class ManagePatient implements PatientDAO {
 
     @Override
     public List<Patient> getAllPatients() {
+        Session session = factory.openSession();
+        Transaction tx = null;
         try {
-            return session.createQuery("FROM Patient").list();
+            tx = session.beginTransaction();
+            List<Patient> patients = session.createQuery("FROM Patient").list();
+            tx.commit();
+            return patients;
         } catch (HibernateException e) {
             System.err.println("Gagal");
         }

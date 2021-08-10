@@ -16,16 +16,12 @@ import java.util.Date;
  * @author mac
  */
 public class DateCellRenderer extends DefaultTableCellRenderer {
+    public DateCellRenderer() { super(); }
+
     @Override
-    public Component getTableCellRendererComponent(JTable jtable, Object value, boolean selected, boolean hasFocus, int row, int column) {
+    public void setValue(Object value) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
 
-        if (value instanceof Date) {
-            // You could use SimpleDateFormatter instead
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            value = formatter.format(value);  
-//            value = DateFormat.getDateInstance().format(value);
-        }
-
-        return super.getTableCellRendererComponent(jtable, value, selected, hasFocus, row, column);
+        setText((value == null) ? "" : sdf.format(value));
     }
 }

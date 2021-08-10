@@ -5,6 +5,7 @@
  */
 package com.mycompany.maven.app.view;
 import com.mycompany.maven.app.model.Menu;
+import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 import java.awt.Image;
@@ -20,6 +21,7 @@ import javax.swing.JPanel;
 public class MainFrame extends javax.swing.JFrame {
 
     private final ArrayList<Menu> menus = new ArrayList<Menu>();
+    CardLayout cl = new CardLayout();
     Color menuIn = new Color(44, 61, 79);
     Color menuOut = new Color(52,73,94);
     String activedMenu = "SidebarHome";
@@ -28,18 +30,28 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        menus.add(new Menu(SidebarHome, new HomePanel()));
-        menus.add(new Menu(SidebarDokter, new DokterPanel()));
-        menus.add(new Menu(SidebarPasien, new PasienPanel()));
-        menus.add(new Menu(SidebarObat, new ObatPanel()));
-        menus.add(new Menu(SidebarKamar, new KamarPanel()));
-        menus.add(new Menu(SidebarLaporan, new LaporanPanel()));
+        menus.add(new Menu("home", SidebarHome, new HomePanel()));
+        menus.add(new Menu("dokter", SidebarDokter, new DokterPanel()));
+        
+        PasienPanel pasienPanel = new PasienPanel(MainFrame.this);
+        Menu pasienMenu = new Menu("pasien", SidebarPasien, pasienPanel);
+        PasienCheckup pasienCheck = new PasienCheckup(MainFrame.this, pasienPanel);
+        Menu pasienCheckup = new Menu("pasienCheckup", null, pasienCheck);
+        ArrayList<Menu> pasienChildren = new ArrayList();
+        pasienChildren.add(pasienCheckup);
+        pasienMenu.setChildren(pasienChildren);
+        menus.add(pasienMenu);
+        
+        menus.add(new Menu("obat", SidebarObat, new ObatPanel()));
+        menus.add(new Menu("kamar", SidebarKamar, new KamarPanel()));
+        menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel()));
         
         // first load
         JPanel dashboardPanel = new HomePanel();
         dashboardPanel.setVisible(true);
-        Body.add(dashboardPanel, java.awt.BorderLayout.CENTER);
-        
+//        Body.add(dashboardPanel, java.awt.BorderLayout.CENTER);        
+        Body.setLayout(cl);
+        Body.add(dashboardPanel);
         SidebarHome.setBackground(menuIn);
     }
 
@@ -366,6 +378,20 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
+    public void navigate(String name) {
+        cl.show(Body, name);
+    }
+    
+    public void nestedMenu(ArrayList<Menu> menus) {   
+        for (Iterator<Menu> iterator = menus.iterator(); iterator.hasNext();) {
+            Menu next = iterator.next();
+            Body.add(next.getMenuComponent(), next.getName());
+            if (next.getChildren() != null && !next.getChildren().isEmpty()) {
+                nestedMenu(next.getChildren());
+            }
+        } 
+    }
+    
     public void openMenu(javax.swing.JPanel myPanel) {
         for (Iterator<Menu> iterator = menus.iterator(); iterator.hasNext();) {
             Menu next = iterator.next();
@@ -377,7 +403,10 @@ public class MainFrame extends javax.swing.JFrame {
                 Body.removeAll();
                 Body.repaint();
                 Body.revalidate();
-                Body.add(next.getMenuComponent());
+                Body.add(next.getMenuComponent(), next.getName());
+                if (next.getChildren() != null && !next.getChildren().isEmpty()) {                   
+                    this.nestedMenu(next.getChildren());                    
+                }
                 Body.repaint();
                 Body.revalidate();
             }
