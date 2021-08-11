@@ -66,6 +66,12 @@
             <artifactId>swingx-core</artifactId>
             <version>1.6.5-1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>5.5.1</version>
+        </dependency>
 
     </dependencies>
     <build>

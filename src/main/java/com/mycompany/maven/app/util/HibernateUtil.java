@@ -5,7 +5,7 @@
  */
 package com.mycompany.maven.app.util;
 
-import com.mycompany.maven.app.ManagePatient;
+import com.mycompany.maven.app.controller.ManagePatient;
 import com.mycompany.maven.app.dao.PatientDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;

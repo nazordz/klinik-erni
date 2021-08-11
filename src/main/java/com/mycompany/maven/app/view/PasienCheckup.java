@@ -5,16 +5,20 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.ManagePatientCheckup;
+import com.mycompany.maven.app.controller.ManageDoctor;
+import com.mycompany.maven.app.controller.ManagePatient;
+import com.mycompany.maven.app.controller.ManagePatientCheckup;
+import com.mycompany.maven.app.model.Doctor;
+import com.mycompany.maven.app.model.Patient;
 import com.mycompany.maven.app.model.PatientCheckup;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Iterator;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
+import com.mycompany.maven.app.util.ComboItem;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.HibernateException;
-
+import com.mycompany.maven.app.util.NumberRenderer;
 /**
  *
  * @author mac
@@ -22,26 +26,29 @@ import org.hibernate.HibernateException;
 public class PasienCheckup extends javax.swing.JPanel {
     private PasienPanel pasienPanel;
     private ManagePatientCheckup controller;
+    private ManageDoctor manageDoctor;
     private MainFrame MainFrame;
+    private String editedId = "";
+    private String patientId = "";
     /**
      * Creates new form PasienCheckup
      */
     public PasienCheckup(MainFrame frame, PasienPanel pp) {
         initComponents();
         this.controller = new ManagePatientCheckup();
-
+        this.manageDoctor = new ManageDoctor();
         this.MainFrame = frame;
         this.pasienPanel = pp;
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentHidden(ComponentEvent evt) {
-                System.out.println("Stop");
             }
             @Override
             public void componentShown(ComponentEvent evt) {
-                System.out.println("start");
                 getDataTable();
-                getEditedId();
+                getDoctor();
+                setPatientId();
+                setPatientNameLabel();
             }
         });
     }
@@ -57,25 +64,24 @@ public class PasienCheckup extends javax.swing.JPanel {
 
         Header = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        PatientNameLabel = new javax.swing.JLabel();
         Body = new javax.swing.JPanel();
         Form = new javax.swing.JPanel();
         Group = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
+        SelectDoctor = new javax.swing.JComboBox<>();
+        ComplaintField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        DiagnoseField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        CostField = new javax.swing.JTextField();
         Action = new javax.swing.JPanel();
         ResetForm = new javax.swing.JButton();
         Remove = new javax.swing.JButton();
         Refresh = new javax.swing.JButton();
         BackButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        SaveButton = new javax.swing.JButton();
         TableConteiner = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TableCheckups = new javax.swing.JTable();
@@ -85,8 +91,9 @@ public class PasienCheckup extends javax.swing.JPanel {
         Header.setPreferredSize(new java.awt.Dimension(602, 60));
         Header.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jLabel1.setText("Pasien Checkup");
+        jLabel1.setText("Checkup Pasien");
         Header.add(jLabel1);
+        Header.add(PatientNameLabel);
 
         add(Header, java.awt.BorderLayout.PAGE_START);
 
@@ -94,27 +101,21 @@ public class PasienCheckup extends javax.swing.JPanel {
 
         Form.setLayout(new java.awt.BorderLayout());
 
-        jLabel2.setText("Pasien");
-
         jLabel3.setText("Doktor");
 
         jLabel4.setText("Keluhan");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(75, 23));
+        SelectDoctor.setPreferredSize(new java.awt.Dimension(75, 23));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox2.setPreferredSize(new java.awt.Dimension(75, 23));
-
-        jTextField1.setSize(new java.awt.Dimension(75, 23));
+        ComplaintField.setSize(new java.awt.Dimension(75, 23));
 
         jLabel5.setText("Diagnosa");
 
-        jTextField2.setSize(new java.awt.Dimension(75, 23));
+        DiagnoseField.setSize(new java.awt.Dimension(75, 23));
 
         jLabel6.setText("Biaya");
 
-        jTextField4.setSize(new java.awt.Dimension(75, 23));
+        CostField.setSize(new java.awt.Dimension(75, 23));
 
         javax.swing.GroupLayout GroupLayout = new javax.swing.GroupLayout(Group);
         Group.setLayout(GroupLayout);
@@ -122,49 +123,45 @@ public class PasienCheckup extends javax.swing.JPanel {
             GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addGap(57, 57, 57)
                 .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(GroupLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(GroupLayout.createSequentialGroup()
-                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addGap(57, 57, 57)
-                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField1)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(ComplaintField)
+                    .addComponent(SelectDoctor, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(70, 70, 70)
                 .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6))
                 .addGap(42, 42, 42)
                 .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(DiagnoseField, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CostField, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(147, Short.MAX_VALUE))
         );
         GroupLayout.setVerticalGroup(
             GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(GroupLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(GroupLayout.createSequentialGroup()
+                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(SelectDoctor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(ComplaintField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(GroupLayout.createSequentialGroup()
+                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(DiagnoseField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(GroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(CostField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         Form.add(Group, java.awt.BorderLayout.NORTH);
@@ -179,7 +176,7 @@ public class PasienCheckup extends javax.swing.JPanel {
         });
         Action.add(ResetForm);
 
-        Remove.setText("Hapus pasien");
+        Remove.setText("Hapus Riwayat");
         Remove.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 RemoveMouseClicked(evt);
@@ -209,8 +206,13 @@ public class PasienCheckup extends javax.swing.JPanel {
         });
         Action.add(BackButton);
 
-        jButton1.setText("Simpan");
-        Action.add(jButton1);
+        SaveButton.setText("Simpan");
+        SaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveButtonActionPerformed(evt);
+            }
+        });
+        Action.add(SaveButton);
 
         Form.add(Action, java.awt.BorderLayout.CENTER);
 
@@ -220,24 +222,31 @@ public class PasienCheckup extends javax.swing.JPanel {
 
         TableCheckups.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "id", "Dokter", "Keluhan", "Diagnosa", "Biaya", "dibuat"
+                "id", "doctorId", "Dokter", "Keluhan", "Diagnosa", "Biaya", "dibuat"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        TableCheckups.getColumnModel().getColumn(5).setCellRenderer(NumberRenderer.getCurrencyRenderer());
         TableCheckups.removeColumn(TableCheckups.getColumnModel().getColumn(0));
+        TableCheckups.removeColumn(TableCheckups.getColumnModel().getColumn(0));
+        TableCheckups.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableCheckupsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TableCheckups);
 
         TableConteiner.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -247,21 +256,31 @@ public class PasienCheckup extends javax.swing.JPanel {
         add(Body, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    void getEditedId() {
-        System.out.println("edited ID: " + pasienPanel.getEditedId());
+    public void setPatientId() {
+        this.patientId = pasienPanel.getEditedId();
     }
     
+    public void setPatientNameLabel() {
+        ManagePatient p = new ManagePatient();
+        Patient patient = p.getPatientById(patientId);
+        this.PatientNameLabel.setText(patient.getName());
+    }
+    
+    public void getDoctor() {
+        for (Iterator iterator = this.manageDoctor.getAllDoctors().iterator(); iterator.hasNext();) {
+            Doctor next = (Doctor) iterator.next();
+            SelectDoctor.addItem(new ComboItem(next.getName(), next.getId()));
+        }
+    }
     public void getDataTable() {
         DefaultTableModel tm = (DefaultTableModel) TableCheckups.getModel();
         tm.setRowCount(0);
         try {
             for (Iterator<PatientCheckup> iterator = this.controller.getAllPatientCheckupPatientId(pasienPanel.getEditedId()).iterator(); iterator.hasNext();) {
                 PatientCheckup next = (PatientCheckup) iterator.next();
-                System.out.println(next.getId());
-                System.out.println(next.getCost());
-                System.out.println(next.getPatient().getName());
                 Object[] newRow = {
                     next.getId(),
+                    next.getDoctor().getId(),
                     next.getDoctor().getName(),
                     next.getPainComplaint(),
                     next.getDiagnose(),
@@ -274,40 +293,53 @@ public class PasienCheckup extends javax.swing.JPanel {
             System.err.println("Error: " + e.getMessage());
         }
     }
+    public void refreshTable() {
+        DefaultTableModel tm = (DefaultTableModel) TableCheckups.getModel();
+        getDataTable();
+        tm.fireTableDataChanged();
+        TableCheckups.repaint();
+    }
+    
+    public void resetForm() {
+        this.Remove.setVisible(false);
+        this.editedId = "";
+        SelectDoctor.setSelectedIndex(0);
+        ComplaintField.setText("");
+        DiagnoseField.setText("");
+        CostField.setText("");
+    }
     
     private void ResetFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetFormActionPerformed
         // TODO add your handling code here:
-//        resetForm();
+        resetForm();
     }//GEN-LAST:event_ResetFormActionPerformed
 
     private void RemoveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RemoveMouseClicked
         // TODO add your handling code here:
-//        int confirm = JOptionPane.showOptionDialog(
-//            this,
-//            "Anda Yakin?",
-//            "Hapus",
-//            JOptionPane.YES_NO_OPTION,
-//            JOptionPane.QUESTION_MESSAGE,
-//            null,
-//            null,
-//            null
-//        );
-//        if (confirm == JOptionPane.YES_OPTION) {
-//            int selectedRow = TablePasien.getSelectedRow();
-//            DefaultTableModel pasienModel = (DefaultTableModel) TablePasien.getModel();
-//            controller.delete((String) pasienModel.getValueAt(selectedRow, 0));
-//            pasienModel.removeRow(selectedRow);
-//            JOptionPane.showMessageDialog(this, "Data telah dihapus.");
-//        }
     }//GEN-LAST:event_RemoveMouseClicked
 
     private void RemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveActionPerformed
         // TODO add your handling code here:
+        int confirm = JOptionPane.showOptionDialog(
+            this,
+            "Anda Yakin?",
+            "Hapus",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            null,
+            null
+        );
+        if (confirm == JOptionPane.YES_OPTION) {
+            this.controller.delete(editedId);
+            refreshTable();
+            JOptionPane.showMessageDialog(this, "Data telah dihapus.");
+        }
     }//GEN-LAST:event_RemoveActionPerformed
 
     private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
         // TODO add your handling code here:
-//        refreshTable();
+        refreshTable();
     }//GEN-LAST:event_RefreshActionPerformed
 
     private void BackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackButtonActionPerformed
@@ -315,31 +347,63 @@ public class PasienCheckup extends javax.swing.JPanel {
         MainFrame.navigate("pasien");
     }//GEN-LAST:event_BackButtonActionPerformed
 
+    private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
+        // TODO add your handling code here:
+        Object item = SelectDoctor.getSelectedItem();
+        String doctorId = ((ComboItem)  item).getValue().toString();
+        String complain = ComplaintField.getText();
+        String diagnose = DiagnoseField.getText();
+        double cost =  Double.parseDouble(CostField.getText());
+        PatientCheckup checkup = new PatientCheckup(patientId, doctorId, complain, diagnose, cost);
+        System.out.println("Has id: " + editedId);
+        if (editedId.isEmpty()) {
+            this.controller.insert(checkup);
+        } else {
+            checkup.setId(editedId);
+            this.controller.update(checkup);
+        }
+        refreshTable();
+        resetForm();
+        JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
+    }//GEN-LAST:event_SaveButtonActionPerformed
+
+    private void TableCheckupsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableCheckupsMouseClicked
+        // TODO add your handling code here:
+        this.Remove.setVisible(true);
+        this.editedId = TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 0).toString();
+        String doctorId = TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 1).toString();
+        String doctorName = TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 2).toString();
+        SelectDoctor.getModel().setSelectedItem(new ComboItem(doctorName, doctorId));
+        ComplaintField.setText(TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 3).toString());
+        DiagnoseField.setText(TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 4).toString());
+        double cost = (double) TableCheckups.getModel().getValueAt(TableCheckups.getSelectedRow(), 5);
+        CostField.setText(String.format("%.2f", cost));
+    }//GEN-LAST:event_TableCheckupsMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Action;
     private javax.swing.JButton BackButton;
     private javax.swing.JPanel Body;
+    private javax.swing.JTextField ComplaintField;
+    private javax.swing.JTextField CostField;
+    private javax.swing.JTextField DiagnoseField;
     private javax.swing.JPanel Form;
     private javax.swing.JPanel Group;
     private javax.swing.JPanel Header;
+    private javax.swing.JLabel PatientNameLabel;
     private javax.swing.JButton Refresh;
     private javax.swing.JButton Remove;
     private javax.swing.JButton ResetForm;
+    private javax.swing.JButton SaveButton;
+    private javax.swing.JComboBox<ComboItem> SelectDoctor;
     private javax.swing.JTable TableCheckups;
     private javax.swing.JPanel TableConteiner;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }

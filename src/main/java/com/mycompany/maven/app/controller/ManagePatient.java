@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.maven.app;
+package com.mycompany.maven.app.controller;
 
 import com.mycompany.maven.app.dao.PatientDAO;
 import com.mycompany.maven.app.model.Patient;
@@ -86,7 +86,7 @@ public class ManagePatient implements PatientDAO {
         Patient patient = null;
         try {
             Transaction tx = session.beginTransaction();
-            patient = (Patient) session.get(Patient.class, id);
+            patient = (Patient) session.find(Patient.class, id);
             tx.commit();
             return patient;
         } catch (HibernateException e) {

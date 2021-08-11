@@ -25,15 +25,12 @@ public class Patient {
 
     public Patient() {}
     public Patient(String patientNumber, String name, Date birthDate, String bloodType, String gender, String address) {
-//        this.id = id;
         this.patientNumber = patientNumber;
         this.name = name;
         this.birthDate = birthDate;
         this.bloodType = bloodType;
         this.gender = gender;
         this.address = address;
-//        this.createdAt = createdAt;
-//        this.updatedAt = updatedAt;
     }
     
     /**

@@ -5,7 +5,7 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.ManagePatient;
+import com.mycompany.maven.app.controller.ManagePatient;
 import com.mycompany.maven.app.model.Patient;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -367,8 +367,6 @@ public class PasienPanel extends javax.swing.JPanel {
         } else {
             this.controller.insert(patient);
         }
-        
-        System.out.println(editedId);
         refreshTable();
         resetForm();
         JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
@@ -458,7 +456,6 @@ public class PasienPanel extends javax.swing.JPanel {
 
     private void CheckupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckupActionPerformed
         // TODO add your handling code here:
-        System.err.println("pasienPanel: " + this.editedId);
         MainFrame.navigate("pasienCheckup");
     }//GEN-LAST:event_CheckupActionPerformed
     

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.maven.app;
+package com.mycompany.maven.app.controller;
 
 import com.mycompany.maven.app.dao.PatientCheckupDAO;
 import com.mycompany.maven.app.model.PatientCheckup;
@@ -33,7 +33,6 @@ public class ManagePatientCheckup implements PatientCheckupDAO {
         try {
             tx = session.beginTransaction();
             List<PatientCheckup> checkups = session.createQuery("FROM PatientCheckup", PatientCheckup.class).list();
-//            List<PatientCheckup> checkups = session.get(PatientCheckup.class, "id");
             tx.commit();
             return checkups;
         } catch (HibernateException e) {
@@ -47,22 +46,79 @@ public class ManagePatientCheckup implements PatientCheckupDAO {
 
     @Override
     public boolean insert(PatientCheckup p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.save(p);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
     public boolean update(PatientCheckup p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            PatientCheckup checkup = session.find(PatientCheckup.class, p.getId());
+            checkup.setDoctorId(p.getDoctorId());
+            checkup.setPainComplaint(p.getPainComplaint());
+            checkup.setDiagnose(p.getDiagnose());
+            checkup.setCost(p.getCost());
+            session.save(checkup);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
-    public boolean delete(PatientCheckup id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean delete(String id) {
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+        try {
+            PatientCheckup checkup = (PatientCheckup) session.get(PatientCheckup.class, id);
+            session.delete(checkup);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            System.err.println("Gagal");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
     }
 
     @Override
     public PatientCheckup getPatientCheckupId(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            PatientCheckup checkup = (PatientCheckup) session.find(PatientCheckup.class, id);
+            tx.commit();
+            return checkup;
+        } catch (HibernateException e) {
+            System.err.println("Gagal");
+            e.printStackTrace();
+        }finally {
+            session.close();
+        }
+        return null;
     }
 
     @Override

@@ -6,9 +6,12 @@
 package com.mycompany.maven.app.model;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.UpdateTimestamp;
 /**
  *
  * @author mac
@@ -45,11 +48,11 @@ public class PatientCheckup implements java.io.Serializable  {
     private double cost;
     
     @Column(name = "created_at")
-    @Type(type = "timestamp")
+    @CreationTimestamp
     private Timestamp createdAt;
     
     @Column(name = "updated_at")
-    @Type(type = "timestamp")
+    @UpdateTimestamp
     private Timestamp updatedAt;
 
     public PatientCheckup(){}
@@ -117,7 +120,7 @@ public class PatientCheckup implements java.io.Serializable  {
         this.cost = cost;
     }
 
-    public Timestamp getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
@@ -125,7 +128,7 @@ public class PatientCheckup implements java.io.Serializable  {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 

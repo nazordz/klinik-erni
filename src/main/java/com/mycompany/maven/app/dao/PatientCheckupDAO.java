@@ -15,7 +15,7 @@ public interface PatientCheckupDAO {
     
     public boolean update(PatientCheckup p);
 
-    public boolean delete(PatientCheckup id);
+    public boolean delete(String id);
     
     public PatientCheckup getPatientCheckupId(String id);
     
