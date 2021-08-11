@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 #
 # Project specific excludes
 #
@@ -55,6 +55,5 @@ nb-configuration.xml
 release.properties
 pom.xml.releaseBackup
 pom.xml.tag
-=======
-/target/
->>>>>>> dd68efa52b5de52c4901c3a378d57821e8933144
+
+/target
