@@ -45,11 +45,15 @@ Contributor(s):
     <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db_klinik</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password"></property>
+    <property name="hibernate.connection.password">adb3l1cak</property>
+    <property name="hibernate.globally_quoted_identifiers">true</property> 
     <!--<propperty name="hibernate.jdbc.time_zone">UTC</propperty>-->
     <!--annotation-->
+    <mapping class="com.mycompany.maven.app.model.Room"/>
+    <mapping class="com.mycompany.maven.app.model.BookedRoom"/>
     <mapping class="com.mycompany.maven.app.model.PatientCheckup"/>
     <mapping class="com.mycompany.maven.app.model.Doctor"/>
+    <mapping class="com.mycompany.maven.app.model.Record"/>
     <!--mapping files-->
     <mapping resource="Patient.hbm.xml" />
   </session-factory>

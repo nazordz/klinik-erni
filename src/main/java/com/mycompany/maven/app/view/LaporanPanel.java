@@ -5,6 +5,20 @@
  */
 package com.mycompany.maven.app.view;
 
+import com.mycompany.maven.app.koneksi;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 /**
  *
  * @author mac
@@ -27,19 +41,56 @@ public class LaporanPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Print = new javax.swing.JButton();
+
+        Print.setText("Cetak Laporan Pendapatan");
+        Print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PrintActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addComponent(Print)
+                .addContainerGap(187, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(Print)
+                .addContainerGap(249, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void PrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PrintActionPerformed
+        // TODO add your handling code here:
+        String filename = System.getProperty("user.dir") + File.separator + 
+                "src" + File.separator + "main" + File.separator + "java" +
+                File.separator + "com" + File.separator + "mycompany" + File.separator +
+                "maven" + File.separator + "app" + File.separator + "report" + File.separator +
+                "report-income.jrxml";
+        Map<String, Object> kode = new HashMap<String, Object>();
+        File report = new File(filename);
+        try {
+            koneksi conn = new koneksi();
+            JasperDesign jasDes = JRXmlLoader.load(report);
+            JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
+            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());
+            JasperViewer.viewReport(jasPri, false);
+
+        } catch (Exception e) {
+            System.out.println("err: " + e.getMessage());
+        }
+    }//GEN-LAST:event_PrintActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Print;
     // End of variables declaration//GEN-END:variables
 }

@@ -18,13 +18,13 @@ public class koneksi {
     public Connection connect () {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("Koneksi Berhasil"); 
+            System.out.println("Driver mysql Berhasil"); 
         }catch (ClassNotFoundException e) {
             System.out.println("Koneksi Gagal" +e);
         }
         String url = "jdbc:mysql://localhost:3306/db_klinik";
         try {
-            con = DriverManager.getConnection(url, "root","");
+            con = DriverManager.getConnection(url, "root","adb3l1cak");
             System.out.println("Koneksi Database Berhasil");
         } catch (SQLException e) {
             System.out.println("Gagal Koneksi Database");

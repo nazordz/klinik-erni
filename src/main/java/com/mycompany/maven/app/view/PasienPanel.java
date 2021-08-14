@@ -394,7 +394,7 @@ public class PasienPanel extends javax.swing.JPanel {
             controller.delete((String) pasienModel.getValueAt(selectedRow, 0));
             pasienModel.removeRow(selectedRow);
             JOptionPane.showMessageDialog(this, "Data telah dihapus.");
-        }           
+        }
     }//GEN-LAST:event_RemoveMouseClicked
 
     private void RefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshActionPerformed
@@ -417,7 +417,7 @@ public class PasienPanel extends javax.swing.JPanel {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
-     }
+    }
     private void TablePasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablePasienMouseClicked
         // TODO add your handling code here:
         this.editedId = TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 0).toString();

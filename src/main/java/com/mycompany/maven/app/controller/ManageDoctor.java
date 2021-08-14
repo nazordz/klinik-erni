@@ -25,17 +25,64 @@ public class ManageDoctor implements DoctorDAO{
     }
     @Override
     public boolean insert(Doctor p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.save(p);
+            tx.commit();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
     public boolean update(Doctor p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            Doctor dokter = session.find(Doctor.class, p.getId());
+            dokter.setName(p.getName());
+            dokter.setStrNumber(p.getStrNumber());
+            dokter.setBirthDate(p.getBirthDate());
+            dokter.setAddress(p.getAddress());
+            dokter.setSpecialization(p.getSpecialization());
+            dokter.setGender(p.getGender());
+            session.save(dokter);
+            tx.commit();
+        } catch (HibernateException e) {
+            System.err.println("Gagal");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
     public boolean delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            Doctor dokter = session.get(Doctor.class, id);
+            session.delete(dokter);
+            tx.commit();
+        } catch (HibernateException e) {
+            System.err.println("Gagal");
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+        return false;
     }
 
     @Override
@@ -49,7 +96,7 @@ public class ManageDoctor implements DoctorDAO{
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            List<Doctor> doctors = session.createQuery("FROM Doctor", Doctor.class).list();
+            List<Doctor> doctors = session.createQuery("FROM Doctor", Doctor.class).list();            
             tx.commit();
             return doctors;
         } catch (HibernateException e) {

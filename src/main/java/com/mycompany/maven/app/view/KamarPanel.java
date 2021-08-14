@@ -4,8 +4,13 @@
  * and open the template in the editor.
  */
 package com.mycompany.maven.app.view;
+import com.mycompany.maven.app.controller.ManageBookedRoom;
+import com.mycompany.maven.app.controller.ManagePatient;
+import com.mycompany.maven.app.controller.ManageRoom;
 import java.util.UUID;
+import java.util.List;
 import java.sql.*;
+import com.mycompany.maven.app.util.ComboItem;
 import java.text.Format;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -14,6 +19,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.model.BookedRoom;
+import com.mycompany.maven.app.model.Patient;
+import com.mycompany.maven.app.model.Room;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,11 +31,17 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import com.mycompany.maven.app.util.NumberRenderer;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 /**
@@ -40,16 +54,24 @@ public class KamarPanel extends javax.swing.JPanel {
      * Creates new form KamarPanel
      */
     
-    private String editId;
+    private String editId = "";
     private Connection conn = new koneksi().connect();
     private DefaultTableModel tabmode;
     public Date tgl_masuk,tgl_keluar;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
+    private ManageRoom manageRoom;
+    private ManagePatient managePatient;
+    private ManageBookedRoom manageBookedRoom;
     
     public KamarPanel() {
         initComponents();
-        dataTable();
+        this.manageRoom = new ManageRoom();
+        this.managePatient = new ManagePatient();
+        this.manageBookedRoom = new ManageBookedRoom();
+        getRooms();
+        getPatients();
+//        dataTable();
+        getTable();
     }
 
     /**
@@ -75,28 +97,19 @@ public class KamarPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelKamar = new javax.swing.JTable();
         bSave = new javax.swing.JButton();
-        bEdit = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
         bClear = new javax.swing.JButton();
         bPrint = new javax.swing.JButton();
-        bExit = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        tCari = new javax.swing.JTextField();
-        bCari = new javax.swing.JButton();
         dTglMasuk = new com.toedter.calendar.JDateChooser();
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel1.setText("Data Kamar");
+        jLabel1.setText("Data Penggunaan Kamar");
 
-        jLabel4.setText("Id Kamar");
+        jLabel4.setText("Kamar");
 
-        jLabel5.setText("Id Pasien");
+        jLabel5.setText("Pasien");
 
         jLabel6.setText("Tanggal Masuk");
-
-        cIdKamar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "001", "002", "003", "004", "005" }));
-
-        cIdPasien.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01A", "01B", "02A", "02B", "03A" }));
 
         jLabel7.setText("Tanggal Keluar");
 
@@ -110,19 +123,36 @@ public class KamarPanel extends javax.swing.JPanel {
 
         jLabel9.setText("Rp.");
 
+        jScrollPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jScrollPane1MouseClicked(evt);
+            }
+        });
+
         tabelKamar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Id", "Id Kamar", "Id Pasien", "Tanggal Masuk", "Tanggal Keluar", "Biaya"
+                "id", "room_id", "patient_id", "Kamar", "Pasien", "Tanggal Masuk", "Tanggal Keluar", "Biaya", "dibuat"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, false, false, false, false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tabelKamar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelKamarMouseClicked(evt);
             }
         });
+        tabelKamar.getColumnModel().getColumn(7).setCellRenderer(NumberRenderer.getCurrencyRenderer());
+        tabelKamar.removeColumn(tabelKamar.getColumnModel().getColumn(0));
+        tabelKamar.removeColumn(tabelKamar.getColumnModel().getColumn(0));
         tabelKamar.removeColumn(tabelKamar.getColumnModel().getColumn(0));
         jScrollPane1.setViewportView(tabelKamar);
 
@@ -130,13 +160,6 @@ public class KamarPanel extends javax.swing.JPanel {
         bSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bSaveActionPerformed(evt);
-            }
-        });
-
-        bEdit.setText("Edit");
-        bEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bEditActionPerformed(evt);
             }
         });
 
@@ -161,22 +184,6 @@ public class KamarPanel extends javax.swing.JPanel {
             }
         });
 
-        bExit.setText("Exit");
-        bExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bExitActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Kata Kunci Pencarian");
-
-        bCari.setText("Cari");
-        bCari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCariActionPerformed(evt);
-            }
-        });
-
         dTglMasuk.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dTglMasukPropertyChange(evt);
@@ -191,53 +198,36 @@ public class KamarPanel extends javax.swing.JPanel {
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel1)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(bSave)
-                                                .addComponent(jLabel7))
-                                            .addComponent(jLabel4))
-                                        .addGap(27, 27, 27)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel9)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                    .addComponent(tBiaya)
-                                                    .addComponent(cIdPasien, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                            .addComponent(dTglKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-                                                            .addComponent(cIdKamar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                            .addComponent(dTglMasuk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
-                                                        .addGap(0, 0, Short.MAX_VALUE))))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(bEdit)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(bDelete)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(bClear))))
-                                    .addComponent(jLabel8))
-                                .addGap(18, 18, 18)
-                                .addComponent(bPrint))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(tCari, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(bSave)
+                                .addComponent(jLabel7))
+                            .addComponent(jLabel4))
+                        .addGap(27, 27, 27)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(53, 53, 53)
-                                .addComponent(bCari))
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(tBiaya)
+                                    .addComponent(cIdPasien, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(dTglKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                                            .addComponent(cIdKamar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(dTglMasuk, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
+                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(bPrint)
                                 .addGap(18, 18, 18)
-                                .addComponent(bExit)))))
+                                .addComponent(bDelete)
+                                .addGap(18, 18, 18)
+                                .addComponent(bClear))))
+                    .addComponent(jLabel8))
                 .addContainerGap(122, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -264,17 +254,10 @@ public class KamarPanel extends javax.swing.JPanel {
                                 .addGap(50, 50, 50)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(bSave)
-                                    .addComponent(bEdit)
                                     .addComponent(bDelete)
                                     .addComponent(bClear)
-                                    .addComponent(bPrint)
-                                    .addComponent(bExit))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel2)
-                                    .addComponent(tCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(bCari))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(bPrint))
+                                .addGap(47, 47, 47)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(dTglKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -290,8 +273,26 @@ public class KamarPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-      protected void aktif() {
+    
+    public void getRooms() {
+        cIdKamar.removeAllItems();
+        List<Room> rooms = manageRoom.getAllRooms();
+        for (Iterator<Room> iterator = rooms.iterator(); iterator.hasNext();) {
+            Room next = iterator.next();
+            cIdKamar.addItem(new ComboItem(next.getName(), next.getId()));
+        }
+    }
+    
+    public void getPatients() {
+        cIdPasien.removeAllItems();
+        List<Patient> patients = managePatient.getAllPatients();
+        for (Iterator<Patient> iterator = patients.iterator(); iterator.hasNext();) {
+            Patient next = iterator.next();
+            cIdPasien.addItem(new ComboItem(next.getName(), next.getId()));
+        }
+    }
+    
+    protected void aktif() {
         cIdKamar.setEnabled(true);
         cIdPasien.setEnabled(true);
         dTglMasuk.setEnabled(true);
@@ -301,18 +302,43 @@ public class KamarPanel extends javax.swing.JPanel {
     }
     
     protected void kosong() {
+        this.editId = "";
         cIdKamar.setSelectedIndex(0);
         cIdPasien.setSelectedIndex(0);
         dTglMasuk.setDate(null);
         dTglKeluar.setDate(null);
         tBiaya.setText("");
-        tCari.setText("");
+    }
+    
+    private void getTable() {
+        DefaultTableModel tm = (DefaultTableModel) tabelKamar.getModel();
+        tm.setRowCount(0);
+        List<BookedRoom> bookedRooms = manageBookedRoom.getAllBookedRooms();
+        for (Iterator<BookedRoom> iterator = bookedRooms.iterator(); iterator.hasNext();) {
+            BookedRoom next = iterator.next();
+            Object[] row = {
+                next.getId(),
+                next.getRoomId(),
+                next.getPatientId(),
+                next.getRoom().getName(),
+                next.getPatient().getName(),
+                next.getFrom(),
+                next.getUntil(),
+                next.getCost(),
+                next.getCreatedAt()
+            };
+            tm.addRow(row);
+        }
+    }
+    
+    private void refreshTable() {
+        DefaultTableModel tm = (DefaultTableModel) tabelKamar.getModel();
+        getTable();
+        tm.fireTableDataChanged();
+        tabelKamar.repaint();
     }
     
     protected void dataTable() {
-//        Object[] Baris = {"Id","Id Kamar","Id Pasien","Tanggal Masuk","Tanggal Keluar","Biaya"};
-//        tabmode = new DefaultTableModel(null, Baris);
-//        tabelKamar.setModel(tabmode);
         DefaultTableModel tk = (DefaultTableModel) tabelKamar.getModel();
         tk.setRowCount(0); 
         String sql = "select * from booked_rooms";
@@ -320,14 +346,7 @@ public class KamarPanel extends javax.swing.JPanel {
             java.sql.Statement stat = conn.createStatement();
             ResultSet hasil = stat.executeQuery(sql);
             while (hasil.next()) {
-//                String a = hasil.getString("id");
-//                String b = hasil.getString("room_id");
-//                String c = hasil.getString("patient_id");
-//                String d = hasil.getString("from");
-//                String e = hasil.getString("until");
-//                String f = hasil.getString("cost");
-//                
-//                String[] data = {a,b,c,d,e,f};
+
                 Object o[] = {
                     hasil.getString("id"),
                     hasil.getString("room_id"),
@@ -352,179 +371,111 @@ public class KamarPanel extends javax.swing.JPanel {
 
     private void tabelKamarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelKamarMouseClicked
         // TODO add your handling code here:
-        UUID uuid = UUID.randomUUID();
-        String uuidAsString = uuid.toString();
-        int bar = tabelKamar.getSelectedRow();
-        String a = tabmode.getValueAt(bar, 0).toString();
-        String b = tabmode.getValueAt(bar, 1).toString();
-        String c = tabmode.getValueAt(bar, 2).toString();
-        String d = tabmode.getValueAt(bar, 3).toString();
-        String e = tabmode.getValueAt(bar, 4).toString();
-        String f = tabmode.getValueAt(bar, 5).toString();
+        int row = tabelKamar.getSelectedRow();
+        String id = (String) tabelKamar.getModel().getValueAt(row, 0);
+        String roomId = (String) tabelKamar.getModel().getValueAt(row, 1);
+        String patientId = (String) tabelKamar.getModel().getValueAt(row, 2);
+        String roomName = (String) tabelKamar.getModel().getValueAt(row, 3);
+        String patientName = (String) tabelKamar.getModel().getValueAt(row, 4);
+        Date from = (Date) tabelKamar.getModel().getValueAt(row, 5);
+        Date until = (Date) tabelKamar.getModel().getValueAt(row, 6);
+        double cost = (double) tabelKamar.getModel().getValueAt(row, 7);
         
-        System.out.println("");
-        this.editId = a;
-        cIdKamar.setSelectedItem(b);
-        cIdPasien.setSelectedItem(c);
-        dTglMasuk.setDateFormatString("MMM dd, yyyy");
-        dTglKeluar.setDateFormatString("MMM dd, yyyy");
-        tBiaya.setText(f);
+        this.editId = id;
+        cIdKamar.getModel().setSelectedItem(new ComboItem(roomName, roomId));
+        cIdPasien.getModel().setSelectedItem(new ComboItem(patientName, patientId));
+        dTglMasuk.setDate(from);
+        dTglKeluar.setDate(until);
+        tBiaya.setText(String.format("%.2f", cost));
     }//GEN-LAST:event_tabelKamarMouseClicked
+    
     private static java.sql.Date convertUtilToSql(java.util.Date uDate) {
         java.sql.Date sDate = new java.sql.Date(uDate.getTime());
         return sDate;
     }
+    
     private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
         // TODO add your handling code here:
-        UUID uuid = UUID.randomUUID();
-        String uuidAsString = uuid.toString();
-        String sql = "insert into booked_rooms(`id`, `room_id`, `patient_id`, `from`, `until`, `cost`) values (?,?,?,?,?,?)";
-        try {
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, uuidAsString);
-            stat.setString(2, cIdKamar.getSelectedItem().toString());
-            stat.setString(3, cIdPasien.getSelectedItem().toString());
-//            stat.setDate(4, convertUtilToSql(dTglMasuk.getDate()));
-//            stat.setDate(5, convertUtilToSql(dTglKeluar.getDate()));
-            stat.setString(4, convertUtilToSql(dTglMasuk.getDate()).toString());
-            stat.setString(5, convertUtilToSql(dTglKeluar.getDate()).toString());
-//            stat.setString(2, "001");
-//            stat.setString(3, "01A");
-//            stat.setString(4, "2014-02-01");
-//            stat.setString(5, "2014-03-01");
-            stat.setString(6, tBiaya.getText());
-//            System.out.println();
-            stat.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");
-            kosong();
-            cIdKamar.requestFocus();
-            dataTable();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan"+e);
+        BookedRoom br = new BookedRoom();
+        Object roomItem = cIdKamar.getSelectedItem();
+        String roomId = ((ComboItem) roomItem).getValue();
+        br.setRoomId(roomId);
+        
+        Object patientItem = cIdPasien.getSelectedItem();
+        String patientId = ((ComboItem) patientItem).getValue();
+        br.setPatientId(patientId);
+        
+        br.setFrom(dTglMasuk.getDate());
+        br.setUntil(dTglKeluar.getDate());
+        br.setCost(Double.parseDouble(tBiaya.getText()));
+        if (editId.isEmpty()) {
+            manageBookedRoom.insert(br);
+        } else {
+            br.setId(editId);
+            manageBookedRoom.update(br);
         }
+        kosong();
+        refreshTable();
+        JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
     }//GEN-LAST:event_bSaveActionPerformed
-
-    private void bEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bEditActionPerformed
-        // TODO add your handling code here:
-        UUID uuid = UUID.randomUUID();
-        String uuidAsString = uuid.toString();
-        try {
-            String sql = "update `booked_rooms` set `room_id` = ?, `patient_id` = ?, `from` = ?, `until` = ?, `cost` = ? where `id` = ?";
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, cIdKamar.getSelectedItem().toString());
-            stat.setString(2, cIdPasien.getSelectedItem().toString());
-            stat.setString(3, convertUtilToSql(dTglMasuk.getDate()).toString());
-            stat.setString(4, convertUtilToSql(dTglKeluar.getDate()).toString());
-
-            stat.setString(5, tBiaya.getText());
-            stat.setString(6, editId);
-            stat.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
-            kosong();
-            cIdKamar.requestFocus();
-            dataTable();
-        } catch (SQLException e) {
-            System.out.println("Error : " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "Data Gagal Diubah"+e);
-        }
-    }//GEN-LAST:event_bEditActionPerformed
 
     private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
         // TODO add your handling code here:
         int ok = JOptionPane.showConfirmDialog(null, "hapus","Konfirmasi Dialog", JOptionPane.YES_NO_OPTION);
         if (ok == 0) {
-            String sql = "delete from booked_rooms where room_id =?";
-            try {
-                PreparedStatement stat = conn.prepareStatement(sql);
-                stat.setString(1, cIdKamar.getSelectedItem().toString());
-                stat.executeUpdate();
-                JOptionPane.showMessageDialog(null, "data berhasil dihapus");
-                kosong();
-                cIdKamar.requestFocus();
-                dataTable();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Data gagal dihapus"+e);
-            }
+            manageBookedRoom.delete(editId);
+            kosong();
+            refreshTable();
+            JOptionPane.showMessageDialog(null, "data berhasil dihapus");
         }
     }//GEN-LAST:event_bDeleteActionPerformed
 
     private void bClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bClearActionPerformed
         // TODO add your handling code here:
         kosong();
-        dataTable();
+        refreshTable();
     }//GEN-LAST:event_bClearActionPerformed
 
     private void bPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bPrintActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:       
+        String filename = System.getProperty("user.dir") + File.separator + 
+                "src" + File.separator + "main" + File.separator + "java" +
+                File.separator + "com" + File.separator + "mycompany" + File.separator +
+                "maven" + File.separator + "app" + File.separator + "report" + File.separator +
+                "report-booked-rooms.jrxml";
+        Map<String, Object> kode = new HashMap<String, Object>();
+        File report = new File(filename);
         try {
-            String namaFile = "src/Laporan/laporanKamar.jasper";
-            Connection conn = new koneksi().connect();
-            HashMap parameter = new HashMap();
-            File report_file  = new File (namaFile);
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(report_file.getPath());
-            JasperPrint jasperPrint = JasperFillManager.fillReport (jasperReport, parameter, conn);
-            JasperViewer.viewReport(jasperPrint, false);
-            JasperViewer.setDefaultLookAndFeelDecorated(true);
+            koneksi conn = new koneksi();
+            JasperDesign jasDes = JRXmlLoader.load(report);
+            JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
+            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());
+            JasperViewer.viewReport(jasPri, false);
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage());
+            System.out.println("err: " + e.getMessage());
         }
     }//GEN-LAST:event_bPrintActionPerformed
 
-    private void bExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExitActionPerformed
-        // TODO add your handling code here:
-        if (JOptionPane.showConfirmDialog(null, "Yakin Keluar aplikasi???",
-            "Yakin", JOptionPane.YES_NO_OPTION) ==JOptionPane.YES_OPTION);
-    }//GEN-LAST:event_bExitActionPerformed
-
-    private void bCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCariActionPerformed
-        // TODO add your handling code here:
-        Object[] Baris = {"Id Kamar","Id Pasien","Tanggal Masuk","Tanggal Keluar","Biaya"};
-        tabmode = new DefaultTableModel(null,  Baris);
-        tabelKamar.setModel(tabmode);
-        String sql = "select * from booked_rooms where room_id like '%"+tCari.getText()+"%'";
-        try {
-            java.sql.Statement stat = conn.createStatement();
-            ResultSet hasil = stat.executeQuery(sql);
-            while(hasil.next()) {
-                String a = hasil.getString("room_id");
-                String b = hasil.getString("patient_id");
-                String c = hasil.getString("from");
-                String d = hasil.getString("until");
-                String e = hasil.getString("cost");
-
-                String[] data = {a,b,c,d,e};
-                tabmode.addRow(data);
-            }
-        } catch (Exception e) {
-
-        }
-    }//GEN-LAST:event_bCariActionPerformed
-
     private void dTglMasukPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dTglMasukPropertyChange
         // TODO add your handling code here:
-//        if (dTglMasuk.getDate() != null) {
-//            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//            tgl_masuk = format.format(dTglMasuk.getDate());
-//        }
     }//GEN-LAST:event_dTglMasukPropertyChange
+
+    private void jScrollPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bCari;
     private javax.swing.JButton bClear;
     private javax.swing.JButton bDelete;
-    private javax.swing.JButton bEdit;
-    private javax.swing.JButton bExit;
     private javax.swing.JButton bPrint;
     private javax.swing.JButton bSave;
-    private javax.swing.JComboBox<String> cIdKamar;
-    private javax.swing.JComboBox<String> cIdPasien;
+    private javax.swing.JComboBox<ComboItem> cIdKamar;
+    private javax.swing.JComboBox<ComboItem> cIdPasien;
     private com.toedter.calendar.JDateChooser dTglKeluar;
     private com.toedter.calendar.JDateChooser dTglMasuk;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -533,7 +484,6 @@ public class KamarPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField tBiaya;
-    private javax.swing.JTextField tCari;
     private javax.swing.JTable tabelKamar;
     // End of variables declaration//GEN-END:variables
 }

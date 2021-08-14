@@ -48,7 +48,9 @@ public class Record implements java.io.Serializable {
     @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
     private Doctor doctor;
     
-//    public BookedRoom bookedRoom;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = BookedRoom.class)
+    @JoinColumn(name = "booked_room_id", insertable = false, updatable = false)
+    public BookedRoom bookedRoom;
     
     public Patient getPatient() {
         return patient;

@@ -5,12 +5,16 @@
  */
 package com.mycompany.maven.app.model;
 
+import com.mycompany.maven.app.enumeration.GenderType;
+import com.mycompany.maven.app.enumeration.SpecializationType;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -19,10 +23,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "doctors")
 public class Doctor implements java.io.Serializable {
-    
-    enum GenderType {
-        Pria, Wanita
-    }
     
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
@@ -39,6 +39,10 @@ public class Doctor implements java.io.Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date BirthDate;
     
+    @Column
+    @Enumerated(EnumType.STRING)
+    private SpecializationType Specialization;
+    
     @Enumerated(EnumType.STRING)
     @Column
     private GenderType gender;
@@ -47,9 +51,11 @@ public class Doctor implements java.io.Serializable {
     private String address;
     
     @Column(name = "created_at")
+    @CreationTimestamp
     private Timestamp createdAt;
     
     @Column(name = "updated_at")
+    @UpdateTimestamp
     private Timestamp updatedAt;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false, targetEntity = PatientCheckup.class)
@@ -95,6 +101,14 @@ public class Doctor implements java.io.Serializable {
 
     public void setBirthDate(Date BirthDate) {
         this.BirthDate = BirthDate;
+    }
+
+    public SpecializationType getSpecialization() {
+        return Specialization;
+    }
+
+    public void setSpecialization(SpecializationType Specialization) {
+        this.Specialization = Specialization;
     }
 
     public GenderType getGender() {
