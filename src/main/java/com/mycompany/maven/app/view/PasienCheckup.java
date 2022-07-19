@@ -5,12 +5,14 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.controller.ManageDoctor;
-import com.mycompany.maven.app.controller.ManagePatient;
-import com.mycompany.maven.app.controller.ManagePatientCheckup;
+//import com.mycompany.maven.app.controller.ManagePatient;
+//import com.mycompany.maven.app.controller.ManagePatientCheckup;
 import com.mycompany.maven.app.model.Doctor;
 import com.mycompany.maven.app.model.Patient;
 import com.mycompany.maven.app.model.PatientCheckup;
+import com.mycompany.maven.app.service.DoctorServiceImpl;
+import com.mycompany.maven.app.service.PatientCheckupServiceImpl;
+import com.mycompany.maven.app.service.PatientServiceImpl;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Iterator;
@@ -25,8 +27,8 @@ import com.mycompany.maven.app.util.NumberRenderer;
  */
 public class PasienCheckup extends javax.swing.JPanel {
     private PasienPanel pasienPanel;
-    private ManagePatientCheckup controller;
-    private ManageDoctor manageDoctor;
+    private PatientCheckupServiceImpl patientCheckupService;
+    private DoctorServiceImpl doctorService;
     private MainFrame MainFrame;
     private String editedId = "";
     private String patientId = "";
@@ -35,8 +37,8 @@ public class PasienCheckup extends javax.swing.JPanel {
      */
     public PasienCheckup(MainFrame frame, PasienPanel pp) {
         initComponents();
-        this.controller = new ManagePatientCheckup();
-        this.manageDoctor = new ManageDoctor();
+        this.patientCheckupService = new PatientCheckupServiceImpl();
+        this.doctorService = new DoctorServiceImpl();
         this.MainFrame = frame;
         this.pasienPanel = pp;
         addComponentListener(new ComponentAdapter() {
@@ -261,14 +263,13 @@ public class PasienCheckup extends javax.swing.JPanel {
     }
     
     public void setPatientNameLabel() {
-        ManagePatient p = new ManagePatient();
-        Patient patient = p.getPatientById(patientId);
+        PatientServiceImpl p = new PatientServiceImpl();
+        Patient patient = p.findById(patientId);
         this.PatientNameLabel.setText(patient.getName());
     }
     
     public void getDoctor() {
-        for (Iterator iterator = this.manageDoctor.getAllDoctors().iterator(); iterator.hasNext();) {
-            Doctor next = (Doctor) iterator.next();
+        for (Doctor next : this.doctorService.findAll()) {
             SelectDoctor.addItem(new ComboItem(next.getName(), next.getId()));
         }
     }
@@ -276,7 +277,7 @@ public class PasienCheckup extends javax.swing.JPanel {
         DefaultTableModel tm = (DefaultTableModel) TableCheckups.getModel();
         tm.setRowCount(0);
         try {
-            for (Iterator<PatientCheckup> iterator = this.controller.getAllPatientCheckupPatientId(pasienPanel.getEditedId()).iterator(); iterator.hasNext();) {
+            for (Iterator<PatientCheckup> iterator = this.patientCheckupService.getAllPatientCheckupPatientId(pasienPanel.getEditedId()).iterator(); iterator.hasNext();) {
                 PatientCheckup next = (PatientCheckup) iterator.next();
                 Object[] newRow = {
                     next.getId(),
@@ -331,7 +332,7 @@ public class PasienCheckup extends javax.swing.JPanel {
             null
         );
         if (confirm == JOptionPane.YES_OPTION) {
-            this.controller.delete(editedId);
+            this.patientCheckupService.delete(editedId);
             refreshTable();
             JOptionPane.showMessageDialog(this, "Data telah dihapus.");
         }
@@ -357,10 +358,10 @@ public class PasienCheckup extends javax.swing.JPanel {
         PatientCheckup checkup = new PatientCheckup(patientId, doctorId, complain, diagnose, cost);
         System.out.println("Has id: " + editedId);
         if (editedId.isEmpty()) {
-            this.controller.insert(checkup);
+            this.patientCheckupService.insert(checkup);
         } else {
             checkup.setId(editedId);
-            this.controller.update(checkup);
+            this.patientCheckupService.update(checkup);
         }
         refreshTable();
         resetForm();

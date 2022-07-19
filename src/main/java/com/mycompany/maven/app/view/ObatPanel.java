@@ -4,10 +4,17 @@
  * and open the template in the editor.
  */
 package com.mycompany.maven.app.view;
+import com.mycompany.maven.app.enumeration.MedicineType;
+import com.mycompany.maven.app.enumeration.MedicineUse;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.model.Medicine;
+import com.mycompany.maven.app.service.MedicineServiceImpl;
+import com.mycompany.maven.app.util.MedicineUtil;
+import java.util.List;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -16,23 +23,25 @@ import com.mycompany.maven.app.koneksi;
 public final class ObatPanel extends javax.swing.JPanel {
     private final Connection conn = new koneksi().connect();
     private DefaultTableModel tabmode;
+    private MedicineServiceImpl medicineService;
+    private String selectedId;
 
     /**
      * Creates new form ObatPanel
      */
     public ObatPanel() {
+        this.medicineService = new MedicineServiceImpl();
         initComponents();
         datatable();
+        tabelobat.removeColumn(tabelobat.getColumnModel().getColumn(0));
     }
     protected void aktif(){
-        tid.setEnabled(true);
         tnama.setEnabled(true);
         tstok.setEnabled(true);
-        tharga.setEnabled(true);
-        tid.requestFocus();
+        tharga.setEnabled(true);        
     }
     protected void kosong(){
-        tid.setText("");
+        this.selectedId = null;
         tnama.setText("");
         cap.setSelectedIndex(0);
         cjo.setSelectedIndex(0);
@@ -40,25 +49,24 @@ public final class ObatPanel extends javax.swing.JPanel {
         tharga.setText("");
     }
     protected void datatable(){
-        Object[] Baris = {"Id Obat", "Nama Obat", "Aturan Pakai", "Jenis Obat", "Stok Obat", "Harga Obat"};
-        tabmode = new DefaultTableModel(null, Baris);
-        tabelobat.setModel(tabmode);
-        String sql = "select * from medicines";
+        DefaultTableModel tm = (DefaultTableModel) tabelobat.getModel();
+        tm.setRowCount(0);
         try {
-            java.sql.Statement stat = conn.createStatement();
-            ResultSet hasil = stat.executeQuery(sql);
-            while (hasil.next()){
-                String id = hasil.getString("id");
-                String a = hasil.getString("name");
-                String b = hasil.getString("use");
-                String c = hasil.getString("type");
-                String d = hasil.getString("stock");
-                String e = hasil.getString("price");
-                
-                String[] data ={id, a,b,c,d,e};
-                tabmode.addRow(data);
+            List<Medicine> medicines = medicineService.findAll();
+            for (Medicine medicine : medicines) {
+                Object[] newRow = {
+                    medicine.getId(),
+                    medicine.getName(),
+                    MedicineUtil.medicineUseToString(medicine.getUse()),
+                    medicine.getType(),
+                    medicine.getStock(),
+                    medicine.getPrice()
+                };
+                tm.addRow(newRow);
             }
-        } catch (SQLException e) {
+        } catch (HibernateException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
     /**
@@ -72,13 +80,11 @@ public final class ObatPanel extends javax.swing.JPanel {
 
         jButton4 = new javax.swing.JButton();
         North = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        tid = new javax.swing.JTextField();
         tnama = new javax.swing.JTextField();
         tstok = new javax.swing.JTextField();
         tharga = new javax.swing.JTextField();
@@ -88,7 +94,6 @@ public final class ObatPanel extends javax.swing.JPanel {
         btnSimpan = new javax.swing.JButton();
         btnUbah = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
-        btnClose = new javax.swing.JButton();
         btnPrint = new javax.swing.JButton();
         South = new javax.swing.JPanel();
         Bottom = new javax.swing.JScrollPane();
@@ -99,9 +104,6 @@ public final class ObatPanel extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
 
         North.setBackground(new java.awt.Color(223, 230, 233));
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Id Obat");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Nama Obat");
@@ -150,14 +152,6 @@ public final class ObatPanel extends javax.swing.JPanel {
             }
         });
 
-        btnClose.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnClose.setText("Tutup");
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCloseActionPerformed(evt);
-            }
-        });
-
         btnPrint.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnPrint.setText("Cetak");
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
@@ -173,7 +167,6 @@ public final class ObatPanel extends javax.swing.JPanel {
             .addGroup(EastLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(EastLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnClose, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnUbah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -189,11 +182,9 @@ public final class ObatPanel extends javax.swing.JPanel {
                 .addComponent(btnUbah)
                 .addGap(18, 18, 18)
                 .addComponent(btnHapus)
-                .addGap(18, 18, 18)
-                .addComponent(btnClose)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPrint)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout NorthLayout = new javax.swing.GroupLayout(North);
@@ -207,15 +198,13 @@ public final class ObatPanel extends javax.swing.JPanel {
                     .addComponent(jLabel6)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                 .addGroup(NorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cap, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cjo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(tstok, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
                     .addComponent(tnama)
-                    .addComponent(tid)
                     .addComponent(tharga))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(East, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -228,10 +217,7 @@ public final class ObatPanel extends javax.swing.JPanel {
                 .addGroup(NorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(East, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(NorthLayout.createSequentialGroup()
-                        .addGroup(NorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tid, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
+                        .addGap(10, 10, 10)
                         .addGroup(NorthLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(tnama, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
@@ -268,15 +254,23 @@ public final class ObatPanel extends javax.swing.JPanel {
         tabelobat.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         tabelobat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Id Obat", "Nama Obat", "Aturan Pakai", "Jenis Obat", "Stok Obat", "Harga Obat", "Created At", "Updated At"
+                "id", "Nama Obat", "Aturan Pakai", "Jenis Obat", "Stok Obat", "Harga Obat"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tabelobat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tabelobatMouseClicked(evt);
@@ -291,71 +285,58 @@ public final class ObatPanel extends javax.swing.JPanel {
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         // TODO add your handling code here:
-        String sql = "insert into medicines (`id`, `name`, `use`, `type`, `stock`, `price`) values (?,?,?,?,?,?)";
-        try {
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tid.getText());
-            stat.setString(2, tnama.getText());
-            stat.setString(3, cap.getSelectedItem().toString());
-            stat.setString(4, cjo.getSelectedItem().toString());
-            stat.setString(5, tstok.getText());
-            stat.setString(6, tharga.getText());
-            
-            stat.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");
-            kosong();
-            tid.requestFocus();
-            datatable();
-        }catch (SQLException e){
-            JOptionPane.showMessageDialog(null, "Data Gagal Disimpan"+e);
+        Medicine medicine = new Medicine();
+        medicine.setName(tnama.getText());
+        if (cap.getSelectedItem().toString() == "1x3") {
+            medicine.setUse(MedicineUse.ONE_TIME_THREE);
+        } else if (cap.getSelectedItem().toString() == "1x2") {
+            medicine.setUse(MedicineUse.ONE_TIME_TWO);
+        } else if (cap.getSelectedItem().toString() == "2x1") {
+            medicine.setUse(MedicineUse.TWO_TIME_ONE);
         }
+
+        MedicineType typeEnum = MedicineType.valueOf(cjo.getSelectedItem().toString());
+        medicine.setType(typeEnum);
+        medicine.setStock(Integer.parseInt(tstok.getText()));
+        medicine.setPrice(Double.parseDouble(tharga.getText()));
+        medicineService.insert(medicine);
+        JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");
+        kosong();
+        datatable();
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
         // TODO add your handling code here:
-        try {
-            String sql = "update `medicines` set `name` = ?, `use` = ?, `type` = ?, `stock` = ?, `price` = ? "
-                    + "where `id` = ?";
-            PreparedStatement stat = conn.prepareStatement(sql);
-            stat.setString(1, tnama.getText());
-            stat.setString(2, cap.getSelectedItem().toString());
-            stat.setString(3, cjo.getSelectedItem().toString());
-            stat.setString(4, tstok.getText());
-            stat.setString(5, tharga.getText());
-            stat.setString(6, tid.getText());
-            
-            stat.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data Berhasil diubah");
-            kosong();
-            tid.requestFocus();
-            datatable();
-        }catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Data Gagal diubah" +e);
+        Medicine medicine = new Medicine();
+        medicine.setId(selectedId);
+        medicine.setName(tnama.getText());
+        if (cap.getSelectedItem().toString() == "1x3") {
+            medicine.setUse(MedicineUse.ONE_TIME_THREE);
+        } else if (cap.getSelectedItem().toString() == "1x2") {
+            medicine.setUse(MedicineUse.ONE_TIME_TWO);
+        } else if (cap.getSelectedItem().toString() == "2x1") {
+            medicine.setUse(MedicineUse.TWO_TIME_ONE);
         }
+
+        MedicineType typeEnum = MedicineType.valueOf(cjo.getSelectedItem().toString());
+        medicine.setType(typeEnum);
+        medicine.setStock(Integer.parseInt(tstok.getText()));
+        medicine.setPrice(Double.parseDouble(tharga.getText()));
+        medicineService.update(medicine);
+        JOptionPane.showMessageDialog(null, "Data Berhasil Disimpan");
+        kosong();
+        datatable();
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         // TODO add your handling code here:
         int ok = JOptionPane.showConfirmDialog(null,"hapus","Konfirmasi Dialog", JOptionPane.YES_NO_CANCEL_OPTION);
-        if (ok==0){
-            String sql = "delete from medicines where id ='"+tid.getText()+"'";
-            try {
-                PreparedStatement stat = conn.prepareStatement(sql);
-                stat.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Data berhasil dihapus");
-                kosong();
-                tid.requestFocus();
-                datatable();
-            }catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Data gagal dihapus" +e);
-            }
+        if (ok == 0){
+            medicineService.delete(selectedId);
+            kosong();
+            datatable();
         }
     }//GEN-LAST:event_btnHapusActionPerformed
-
-    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_btnCloseActionPerformed
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
@@ -367,20 +348,23 @@ public final class ObatPanel extends javax.swing.JPanel {
 
     private void tabelobatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelobatMouseClicked
         // TODO add your handling code here:
-        int bar = tabelobat.getSelectedRow();
-        String a = tabmode.getValueAt(bar,0).toString();
-        String b = tabmode.getValueAt(bar,1).toString();
-        String c = tabmode.getValueAt(bar,2).toString();
-        String d = tabmode.getValueAt(bar,3).toString();
-        String e = tabmode.getValueAt(bar,4).toString();
-        String f = tabmode.getValueAt(bar,5).toString();
-
-        tid.setText(a);
-        tnama.setText(b);
-        cap.setSelectedItem(c);
-        cjo.setSelectedItem(d);
-        tstok.setText(e);
-        tharga.setText(f);
+        Object id = tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 0);
+        this.selectedId = id.toString();
+        tnama.setText(
+            tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 1).toString()
+        );
+        tstok.setText(
+            tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 4).toString()
+        );
+        tharga.setText(
+            tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 5).toString()
+        );
+        cap.setSelectedItem(
+            tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 2).toString()
+        );
+        cjo.setSelectedItem(
+            tabelobat.getModel().getValueAt(tabelobat.getSelectedRow(), 3).toString()
+        );
     }//GEN-LAST:event_tabelobatMouseClicked
 
 
@@ -389,7 +373,6 @@ public final class ObatPanel extends javax.swing.JPanel {
     private javax.swing.JPanel East;
     private javax.swing.JPanel North;
     private javax.swing.JPanel South;
-    private javax.swing.JButton btnClose;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnSimpan;
@@ -397,7 +380,6 @@ public final class ObatPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cap;
     private javax.swing.JComboBox<String> cjo;
     private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -405,12 +387,7 @@ public final class ObatPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JTable tabelobat;
     private javax.swing.JTextField tharga;
-    private javax.swing.JTextField tid;
     private javax.swing.JTextField tnama;
     private javax.swing.JTextField tstok;
     // End of variables declaration//GEN-END:variables
-
-    private void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

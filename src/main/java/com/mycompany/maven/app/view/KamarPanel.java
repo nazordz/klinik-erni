@@ -4,24 +4,19 @@
  * and open the template in the editor.
  */
 package com.mycompany.maven.app.view;
-import com.mycompany.maven.app.controller.ManageBookedRoom;
-import com.mycompany.maven.app.controller.ManagePatient;
-import com.mycompany.maven.app.controller.ManageRoom;
-import java.util.UUID;
+import com.mycompany.maven.app.service.BookedRoomService;
+import com.mycompany.maven.app.service.RoomService;
 import java.util.List;
 import java.sql.*;
 import com.mycompany.maven.app.util.ComboItem;
-import java.text.Format;
-import javax.swing.*;
-import javax.swing.table.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.HeadlessException;
 import java.sql.Connection;
 import com.mycompany.maven.app.koneksi;
 import com.mycompany.maven.app.model.BookedRoom;
 import com.mycompany.maven.app.model.Patient;
 import com.mycompany.maven.app.model.Room;
+import com.mycompany.maven.app.service.PatientServiceImpl;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -59,15 +54,15 @@ public class KamarPanel extends javax.swing.JPanel {
     private DefaultTableModel tabmode;
     public Date tgl_masuk,tgl_keluar;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    private ManageRoom manageRoom;
-    private ManagePatient managePatient;
-    private ManageBookedRoom manageBookedRoom;
+    private RoomService manageRoom;
+    private PatientServiceImpl patientService;
+    private BookedRoomService manageBookedRoom;
     
     public KamarPanel() {
         initComponents();
-        this.manageRoom = new ManageRoom();
-        this.managePatient = new ManagePatient();
-        this.manageBookedRoom = new ManageBookedRoom();
+        this.manageRoom = new RoomService();
+        this.patientService = new PatientServiceImpl();
+        this.manageBookedRoom = new BookedRoomService();
         getRooms();
         getPatients();
 //        dataTable();
@@ -285,7 +280,7 @@ public class KamarPanel extends javax.swing.JPanel {
     
     public void getPatients() {
         cIdPasien.removeAllItems();
-        List<Patient> patients = managePatient.getAllPatients();
+        List<Patient> patients = patientService.findAll();
         for (Iterator<Patient> iterator = patients.iterator(); iterator.hasNext();) {
             Patient next = iterator.next();
             cIdPasien.addItem(new ComboItem(next.getName(), next.getId()));

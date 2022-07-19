@@ -5,8 +5,6 @@
  */
 package com.mycompany.maven.app.util;
 
-import com.mycompany.maven.app.controller.ManagePatient;
-import com.mycompany.maven.app.dao.PatientDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.HibernateException;
@@ -20,7 +18,6 @@ import org.hibernate.cfg.Configuration;
 public class HibernateUtil {
     
     private static SessionFactory sessionFactory;
-    private static PatientDAO patientDao;
     
     static {
         try {
@@ -30,13 +27,6 @@ public class HibernateUtil {
             throw new ExceptionInInitializerError(e);
         }
     }
-    
-//    public static PatientDAO getPatientDao() {
-//        if (patientDao == null) {
-//            patientDao = new ManagePatient(getSessionFactory().openSession());
-//        }
-//        return patientDao;
-//    }
     
     public static SessionFactory getSessionFactory() {
         return sessionFactory;

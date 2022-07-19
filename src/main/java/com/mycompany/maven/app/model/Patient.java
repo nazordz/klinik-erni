@@ -5,22 +5,53 @@
  */
 package com.mycompany.maven.app.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
 
 /**
- * Example using xml
  * @author mac
  */
+@Entity
+@Table(name = "patients")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Data
 public class Patient {
+    @Id
+    @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(generator = "UUID4")
     private String id;
+
+    @Column(name = "patient_number")
     private String patientNumber;
+
+    @Column
     private String name;
+
+    @Column(name = "birth_date")
     private Date birthDate;
+
+    @Column(name = "blood_type")
     private String bloodType;
+
+    @Column
     private String gender;
+
+    @Column
     private String address;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @Column(name = "updated_at")
+    @CreationTimestamp
     private Timestamp updatedAt;
 
     public Patient() {}
@@ -33,131 +64,7 @@ public class Patient {
         this.address = address;
     }
     
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the patientNumber
-     */
-    public String getPatientNumber() {
-        return patientNumber;
-    }
-
-    /**
-     * @param patientNumber the patientNumber to set
-     */
-    public void setPatientNumber(String patientNumber) {
-        this.patientNumber = patientNumber;
-    }
-
-    /**
-     * @return the birthDate
-     */
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    /**
-     * @param birthDate the birthDate to set
-     */
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    /**
-     * @return the bloodType
-     */
-    public String getBloodType() {
-        return bloodType;
-    }
-
-    /**
-     * @param bloodType the bloodType to set
-     */
-    public void setBloodType(String bloodType) {
-        this.bloodType = bloodType;
-    }
-
-    /**
-     * @return the gender
-     */
-    public String getGender() {
-        return gender;
-    }
-
-    /**
-     * @param gender the gender to set
-     */
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    /**
-     * @return the address
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * @param address the address to set
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    /**
-     * @return the createdAt
-     */
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    /**
-     * @return the updatedAt
-     */
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @param createdAt the createdAt to set
-     */
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * @param updatedAt the updatedAt to set
-     */
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    
     
     
 }

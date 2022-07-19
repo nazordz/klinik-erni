@@ -6,8 +6,18 @@
 package com.mycompany.maven.app.model;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import javax.persistence.*;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,6 +27,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 @Table(name = "patient_checkups")
+@Data
 public class PatientCheckup implements java.io.Serializable  {
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
@@ -46,6 +57,9 @@ public class PatientCheckup implements java.io.Serializable  {
     @Column(precision = 15, scale = 2)
     private double cost;
     
+   @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "patientCheckup" )
+   private List<PatientCheckupMedicine> patientCheckupMedicines;
+    
     @Column(name = "created_at")
     @CreationTimestamp
     private Timestamp createdAt;
@@ -61,77 +75,5 @@ public class PatientCheckup implements java.io.Serializable  {
         this.painComplaint = painComplaint;
         this.diagnose = diagnose;
         this.cost = cost;
-    }
-    
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
-
-    public String getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
-    }
-    
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public Doctor getDoctor() {
-        return doctor;
-    }
-    
-    public String getPainComplaint() {
-        return painComplaint;
-    }
-
-    public void setPainComplaint(String painComplaint) {
-        this.painComplaint = painComplaint;
-    }
-
-    public String getDiagnose() {
-        return diagnose;
-    }
-
-    public void setDiagnose(String diagnose) {
-        this.diagnose = diagnose;
-    }
-
-    public Double getCost() {
-        return cost;
-    }
-
-    public void setCost(Double cost) {
-        this.cost = cost;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

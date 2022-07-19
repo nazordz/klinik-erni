@@ -5,8 +5,8 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.controller.ManagePatient;
 import com.mycompany.maven.app.model.Patient;
+import com.mycompany.maven.app.service.PatientServiceImpl;
 import java.util.Calendar;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
@@ -22,7 +22,7 @@ import com.mycompany.maven.app.util.DateCellRenderer;
  */
 public class PasienPanel extends javax.swing.JPanel {
     
-    private ManagePatient controller;
+    private PatientServiceImpl patientService;
     private String editedId = "";
     private MainFrame MainFrame;
     /**
@@ -31,7 +31,7 @@ public class PasienPanel extends javax.swing.JPanel {
     public PasienPanel(MainFrame frame) {
         initComponents();
         this.MainFrame = frame;
-        this.controller = new ManagePatient();
+        this.patientService = new PatientServiceImpl();
         getDataTable();
     }
 
@@ -363,9 +363,9 @@ public class PasienPanel extends javax.swing.JPanel {
         Patient patient = new Patient(patientNumber, name, birthDate, bloodType, gender, address);
         if (!editedId.isEmpty()) {
             patient.setId(editedId);
-            this.controller.update(patient);
+            this.patientService.update(patient);
         } else {
-            this.controller.insert(patient);
+            this.patientService.insert(patient);
         }
         refreshTable();
         resetForm();
@@ -391,7 +391,7 @@ public class PasienPanel extends javax.swing.JPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             int selectedRow = TablePasien.getSelectedRow();
             DefaultTableModel pasienModel = (DefaultTableModel) TablePasien.getModel();            
-            controller.delete((String) pasienModel.getValueAt(selectedRow, 0));
+            patientService.delete((String) pasienModel.getValueAt(selectedRow, 0));
             pasienModel.removeRow(selectedRow);
             JOptionPane.showMessageDialog(this, "Data telah dihapus.");
         }
@@ -485,7 +485,7 @@ public class PasienPanel extends javax.swing.JPanel {
         String address = (String) tm.getValueAt(row, 6);
         Patient updated = new Patient(patientNumber, name, birthDate, bloodType, gender, address);
         updated.setId(id);
-        this.controller.update(updated);
+        this.patientService.update(updated);
     }
     
     public void getDataTable() {
@@ -494,7 +494,7 @@ public class PasienPanel extends javax.swing.JPanel {
         try {
 //            ManagePatient mp = new ManagePatient();
 //            DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
-            for (Iterator iterator = this.controller.getAllPatients().iterator(); iterator.hasNext();) {
+            for (Iterator iterator = this.patientService.findAll().iterator(); iterator.hasNext();) {
                 Patient next = (Patient) iterator.next();
                 Object o[] = {
                     next.getId(),

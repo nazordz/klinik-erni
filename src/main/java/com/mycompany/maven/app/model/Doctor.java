@@ -8,10 +8,20 @@ package com.mycompany.maven.app.model;
 import com.mycompany.maven.app.enumeration.GenderType;
 import com.mycompany.maven.app.enumeration.SpecializationType;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,6 +32,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 @Table(name = "doctors")
+@Data
 public class Doctor implements java.io.Serializable {
     
     @Id
@@ -34,6 +45,12 @@ public class Doctor implements java.io.Serializable {
     
     @Column
     private String name;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false, unique = true)
+    private String phone;
     
     @Column(name = "birth_date")
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -50,6 +67,9 @@ public class Doctor implements java.io.Serializable {
     @Column
     private String address;
     
+    @Column
+    private String password;
+    
     @Column(name = "created_at")
     @CreationTimestamp
     private Timestamp createdAt;
@@ -58,88 +78,6 @@ public class Doctor implements java.io.Serializable {
     @UpdateTimestamp
     private Timestamp updatedAt;
     
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false, targetEntity = PatientCheckup.class)
-    @JoinColumn(name = "doctor_id")
-    private List<PatientCheckup> patientCheckups = new ArrayList<PatientCheckup>(); 
-
-    public List<PatientCheckup> getPatientCheckups() {
-        return patientCheckups;
-    }
-
-    public void setPatientCheckups(List<PatientCheckup> patientCheckups) {
-        this.patientCheckups = patientCheckups;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getStrNumber() {
-        return strNumber;
-    }
-
-    public void setStrNumber(String strNumber) {
-        this.strNumber = strNumber;
-    }
-
-    
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Date getBirthDate() {
-        return BirthDate;
-    }
-
-    public void setBirthDate(Date BirthDate) {
-        this.BirthDate = BirthDate;
-    }
-
-    public SpecializationType getSpecialization() {
-        return Specialization;
-    }
-
-    public void setSpecialization(SpecializationType Specialization) {
-        this.Specialization = Specialization;
-    }
-
-    public GenderType getGender() {
-        return gender;
-    }
-
-    public void setGender(GenderType gender) {
-        this.gender = gender;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "doctor")
+    private List<PatientCheckup> patientCheckups; 
 }

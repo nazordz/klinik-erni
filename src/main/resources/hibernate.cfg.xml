@@ -41,12 +41,16 @@ Contributor(s):
 -->
 <hibernate-configuration>
   <session-factory>
-    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/db_klinik</property>
     <property name="hibernate.connection.username">root</property>
     <property name="hibernate.connection.password">adb3l1cak</property>
-    <property name="hibernate.globally_quoted_identifiers">true</property> 
+    <property name="hibernate.globally_quoted_identifiers">true</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.format_sql">true</property>
+    <property name="hbm2ddl.auto">update</property>
+    <property name="hibernate.dialect.storage_engine">innodb</property>
     <!--<propperty name="hibernate.jdbc.time_zone">UTC</propperty>-->
     <!--annotation-->
     <mapping class="com.mycompany.maven.app.model.Room"/>
@@ -54,7 +58,11 @@ Contributor(s):
     <mapping class="com.mycompany.maven.app.model.PatientCheckup"/>
     <mapping class="com.mycompany.maven.app.model.Doctor"/>
     <mapping class="com.mycompany.maven.app.model.Record"/>
-    <!--mapping files-->
-    <mapping resource="Patient.hbm.xml" />
+    <mapping class="com.mycompany.maven.app.model.Patient"/>
+    <mapping class="com.mycompany.maven.app.model.Medicine"/>
+    <mapping class="com.mycompany.maven.app.model.PatientCheckupMedicine"/>
+    <mapping class="com.mycompany.maven.app.model.Receptionist"/>
+    <mapping class="com.mycompany.maven.app.model.Pharmacist"/>
+    <mapping class="com.mycompany.maven.app.model.Leader"/>
   </session-factory>
 </hibernate-configuration>

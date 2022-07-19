@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.mycompany.maven.app.view;
+import com.mycompany.maven.app.model.Authentication;
 import com.mycompany.maven.app.model.Menu;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -11,8 +12,10 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Iterator;
-import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -21,9 +24,12 @@ import javax.swing.JPanel;
 public class MainFrame extends javax.swing.JFrame {
 
     private final ArrayList<Menu> menus = new ArrayList<Menu>();
+    @Setter
+    @Getter
+    private Authentication authentication;
     CardLayout cl = new CardLayout();
-    Color menuIn = new Color(44, 61, 79);
-    Color menuOut = new Color(52,73,94);
+    Color MENU_IN = new Color(44, 61, 79);
+    Color MENU_OUT = new Color(52,73,94);
     String activedMenu = "SidebarHome";
     /**
      * Creates new form MainFrame
@@ -42,19 +48,23 @@ public class MainFrame extends javax.swing.JFrame {
         pasienMenu.setChildren(pasienChildren);
         menus.add(pasienMenu);
         
+        menus.add(new Menu("hasilPemeriksaan", SidebarHasilPemeriksaan, new PemeriksaanPanel()));
         menus.add(new Menu("obat", SidebarObat, new ObatPanel()));
         menus.add(new Menu("kamar", SidebarKamar, new KamarPanel()));
+        menus.add(new Menu("antrian", SidebarAntrian, new AntrianPanel()));
         menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel()));
-        
+        menus.add(new Menu("resepsionis", SidebarResepsionis, new ResepsionisPanel()));
+        menus.add(new Menu("apoteker", SidebarApoteker, new ApotekerPanel()));
+        menus.add(new Menu("pimpinan", SidebarPimpinan, new PimpinanPanel()));
         // first load
         JPanel dashboardPanel = new HomePanel();
         dashboardPanel.setVisible(true);
 //        Body.add(dashboardPanel, java.awt.BorderLayout.CENTER);        
         Body.setLayout(cl);
         Body.add(dashboardPanel);
-        SidebarHome.setBackground(menuIn);
+        SidebarHome.setBackground(MENU_IN);
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -72,6 +82,18 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarDokter = new javax.swing.JPanel();
         SidebarDokterIcon = new javax.swing.JLabel();
         SidebarDokterTitle = new javax.swing.JLabel();
+        SidebarHasilPemeriksaan = new javax.swing.JPanel();
+        SidebarHasilIcon = new javax.swing.JLabel();
+        SidebarDokterTitle1 = new javax.swing.JLabel();
+        SidebarResepsionis = new javax.swing.JPanel();
+        SidebarResepsionislcon = new javax.swing.JLabel();
+        SidebarResepsionisTitle = new javax.swing.JLabel();
+        SidebarApoteker = new javax.swing.JPanel();
+        SidebarApotekerlcon = new javax.swing.JLabel();
+        SidebarApotekerTitle = new javax.swing.JLabel();
+        SidebarPimpinan = new javax.swing.JPanel();
+        SidebarPimpinanIcon = new javax.swing.JLabel();
+        SidebarPimpinanTitle = new javax.swing.JLabel();
         SidebarPasien = new javax.swing.JPanel();
         SidebarPasienIcon = new javax.swing.JLabel();
         SidebarPasienTitle = new javax.swing.JLabel();
@@ -81,9 +103,15 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarKamar = new javax.swing.JPanel();
         SidebarKamarIcon = new javax.swing.JLabel();
         SidebarKamarTitle = new javax.swing.JLabel();
+        SidebarAntrian = new javax.swing.JPanel();
+        SidebarAntrianIcon = new javax.swing.JLabel();
+        SidebarAntrianTitle = new javax.swing.JLabel();
         SidebarLaporan = new javax.swing.JPanel();
         SidebarLaporanIcon = new javax.swing.JLabel();
         SidebarLaporanTitle = new javax.swing.JLabel();
+        SidebarLogout = new javax.swing.JPanel();
+        SidebarLogoutIcon = new javax.swing.JLabel();
+        SidebarLogoutTitle = new javax.swing.JLabel();
         Main = new javax.swing.JPanel();
         Header = new javax.swing.JPanel();
         HeaderBody = new javax.swing.JPanel();
@@ -95,6 +123,11 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle("Aplikasi Klinik Erni");
         setPreferredSize(new java.awt.Dimension(800, 600));
         setSize(new java.awt.Dimension(800, 600));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         Sidebar.setBackground(new java.awt.Color(52, 73, 94));
         Sidebar.setPreferredSize(new java.awt.Dimension(160, 360));
@@ -126,11 +159,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarHomeIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarHomeIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarHomeIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarHomeIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/home.png")); // NOI18N
         SidebarHomeIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarHomeIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarHome.add(SidebarHomeIcon);
-        ImageIcon imageIcon = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/home.png"); // load the image to a imageIcon
+        ImageIcon imageIcon = new javax.swing.ImageIcon(getClass().getResource("/assets/home.png")); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it
         Image newimg = image.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIcon = new ImageIcon(newimg);  // transform it back
@@ -163,11 +195,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarDokterIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarDokterIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarDokterIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarDokterIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/doctor.png")); // NOI18N
         SidebarDokterIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarDokterIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarDokter.add(SidebarDokterIcon);
-        ImageIcon imageIconDokter = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/doctor.png"); // load the image to a imageIcon
+        ImageIcon imageIconDokter = new javax.swing.ImageIcon(getClass().getResource("/assets/doctor.png")); // load the image to a imageIcon
         Image imageDokter = imageIconDokter.getImage(); // transform it
         Image newimgDokter = imageDokter.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconDokter = new ImageIcon(newimgDokter);  // transform it back
@@ -180,6 +211,150 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarDokter.add(SidebarDokterTitle);
 
         Sidebar.add(SidebarDokter);
+
+        SidebarHasilPemeriksaan.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarHasilPemeriksaan.setName("SidebarHasilPemeriksaan"); // NOI18N
+        SidebarHasilPemeriksaan.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarHasilPemeriksaan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarHasilPemeriksaanMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarHasilPemeriksaanMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarHasilPemeriksaanMouseEntered(evt);
+            }
+        });
+        SidebarHasilPemeriksaan.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarHasilIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarHasilIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarHasilIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarHasilIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarHasilIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarHasilPemeriksaan.add(SidebarHasilIcon);
+        ImageIcon imageIconHasil = new javax.swing.ImageIcon(getClass().getResource("/assets/hasil-pemeriksaan.png")); // load the image to a imageIcon
+        Image imageHasil = imageIconHasil.getImage(); // transform it
+        Image newimgHasil = imageHasil.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconHasil = new ImageIcon(newimgHasil);  // transform it back
+        SidebarHasilIcon.setIcon(imageIconHasil);
+
+        SidebarDokterTitle1.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarDokterTitle1.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarDokterTitle1.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarDokterTitle1.setText("Pemeriksaan");
+        SidebarHasilPemeriksaan.add(SidebarDokterTitle1);
+
+        Sidebar.add(SidebarHasilPemeriksaan);
+
+        SidebarResepsionis.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarResepsionis.setName("SidebarResepsionis"); // NOI18N
+        SidebarResepsionis.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarResepsionis.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarResepsionisMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarResepsionisMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarResepsionisMouseEntered(evt);
+            }
+        });
+        SidebarResepsionis.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarResepsionislcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarResepsionislcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarResepsionislcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarResepsionislcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarResepsionislcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarResepsionis.add(SidebarResepsionislcon);
+        ImageIcon imageIconResepsionis = new javax.swing.ImageIcon(getClass().getResource("/assets/resepsionis.png")); // load the image to a imageIcon
+        Image imageResepsionis = imageIconResepsionis.getImage(); // transform it
+        Image newimgResepsionis = imageResepsionis.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconResepsionis = new ImageIcon(newimgResepsionis);  // transform it back
+        SidebarResepsionislcon.setIcon(imageIconResepsionis);
+
+        SidebarResepsionisTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarResepsionisTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarResepsionisTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarResepsionisTitle.setText("Resepsionis");
+        SidebarResepsionis.add(SidebarResepsionisTitle);
+
+        Sidebar.add(SidebarResepsionis);
+
+        SidebarApoteker.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarApoteker.setName("SidebarApoteker"); // NOI18N
+        SidebarApoteker.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarApoteker.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarApotekerMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarApotekerMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarApotekerMouseEntered(evt);
+            }
+        });
+        SidebarApoteker.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarApotekerlcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarApotekerlcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarApotekerlcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarApotekerlcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarApotekerlcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarApoteker.add(SidebarApotekerlcon);
+        ImageIcon imageIconApoteker = new javax.swing.ImageIcon(getClass().getResource("/assets/apoteker.png")); // load the image to a imageIcon
+        Image imageApoteker = imageIconApoteker.getImage(); // transform it
+        Image newimgApoteker = imageApoteker.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconApoteker = new ImageIcon(newimgApoteker);  // transform it back
+        SidebarApotekerlcon.setIcon(imageIconApoteker);
+
+        SidebarApotekerTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarApotekerTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarApotekerTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarApotekerTitle.setText("Apoteker");
+        SidebarApoteker.add(SidebarApotekerTitle);
+
+        Sidebar.add(SidebarApoteker);
+
+        SidebarPimpinan.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarPimpinan.setName("SidebarPimpinan"); // NOI18N
+        SidebarPimpinan.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarPimpinan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarPimpinanMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarPimpinanMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarPimpinanMouseEntered(evt);
+            }
+        });
+        SidebarPimpinan.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarPimpinanIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarPimpinanIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarPimpinanIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarPimpinanIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarPimpinanIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarPimpinan.add(SidebarPimpinanIcon);
+        ImageIcon imageIconPimpinan = new javax.swing.ImageIcon(getClass().getResource("/assets/pimpinan.png")); // load the image to a imageIcon
+        Image imagePimpinan = imageIconPimpinan.getImage(); // transform it
+        Image newimgPimpinan = imagePimpinan.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconPimpinan = new ImageIcon(newimgPimpinan);  // transform it back
+        SidebarPimpinanIcon.setIcon(imageIconPimpinan);
+
+        SidebarPimpinanTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarPimpinanTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarPimpinanTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarPimpinanTitle.setText("Pimpinan");
+        SidebarPimpinan.add(SidebarPimpinanTitle);
+
+        Sidebar.add(SidebarPimpinan);
 
         SidebarPasien.setBackground(new java.awt.Color(52, 73, 94));
         SidebarPasien.setName("SidebarPasien"); // NOI18N
@@ -200,11 +375,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarPasienIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarPasienIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarPasienIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarPasienIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/user.png")); // NOI18N
         SidebarPasienIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarPasienIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarPasien.add(SidebarPasienIcon);
-        ImageIcon imageIconPasien = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/user.png"); // load the image to a imageIcon
+        ImageIcon imageIconPasien = new javax.swing.ImageIcon(getClass().getResource("/assets/user.png")); // load the image to a imageIcon
         Image imagePasien = imageIconPasien.getImage(); // transform it
         Image newimgPasien = imagePasien.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconPasien = new ImageIcon(newimgPasien);  // transform it back
@@ -237,11 +411,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarObatIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarObatIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarObatIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarObatIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/tabler-pill.png")); // NOI18N
         SidebarObatIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarObatIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarObat.add(SidebarObatIcon);
-        ImageIcon imageIconObat = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/tabler-pill.png"); // load the image to a imageIcon
+        ImageIcon imageIconObat = new javax.swing.ImageIcon(getClass().getResource("/assets/tabler-pill.png")); // load the image to a imageIcon
         Image imageObat = imageIconObat.getImage(); // transform it
         Image newimgObat = imageObat.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconObat = new ImageIcon(newimgObat);  // transform it back
@@ -274,11 +447,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarKamarIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarKamarIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarKamarIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarKamarIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/bed.png")); // NOI18N
         SidebarKamarIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarKamarIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarKamar.add(SidebarKamarIcon);
-        ImageIcon imageIconKamar = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/bed.png"); // load the image to a imageIcon
+        ImageIcon imageIconKamar = new javax.swing.ImageIcon(getClass().getResource("/assets/bed.png")); // load the image to a imageIcon
         Image imageKamar = imageIconKamar.getImage(); // transform it
         Image newimgKamar = imageKamar.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconKamar = new ImageIcon(newimgKamar);  // transform it back
@@ -291,6 +463,42 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarKamar.add(SidebarKamarTitle);
 
         Sidebar.add(SidebarKamar);
+
+        SidebarAntrian.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarAntrian.setName("SidebarAntrian"); // NOI18N
+        SidebarAntrian.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarAntrian.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarAntrianMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarAntrianMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarAntrianMouseExited(evt);
+            }
+        });
+        SidebarAntrian.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarAntrianIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarAntrianIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarAntrianIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarAntrianIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarAntrianIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarAntrian.add(SidebarAntrianIcon);
+        ImageIcon imageIconAntrian = new javax.swing.ImageIcon(getClass().getResource("/assets/antrian.png")); // load the image to a imageIcon
+        Image imageAntrian = imageIconAntrian.getImage(); // transform it
+        Image newimgAntrian = imageAntrian.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconAntrian = new ImageIcon(newimgAntrian);  // transform it back
+        SidebarAntrianIcon.setIcon(imageIconAntrian);
+
+        SidebarAntrianTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarAntrianTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarAntrianTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarAntrianTitle.setText("Antrian");
+        SidebarAntrian.add(SidebarAntrianTitle);
+
+        Sidebar.add(SidebarAntrian);
 
         SidebarLaporan.setBackground(new java.awt.Color(52, 73, 94));
         SidebarLaporan.setName("SidebarLaporan"); // NOI18N
@@ -311,11 +519,10 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarLaporanIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         SidebarLaporanIcon.setForeground(new java.awt.Color(255, 255, 255));
         SidebarLaporanIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        SidebarLaporanIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/file-text.png")); // NOI18N
         SidebarLaporanIcon.setPreferredSize(new java.awt.Dimension(22, 22));
         SidebarLaporanIcon.setSize(new java.awt.Dimension(32, 32));
         SidebarLaporan.add(SidebarLaporanIcon);
-        ImageIcon imageIconLaporan = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/file-text.png"); // load the image to a imageIcon
+        ImageIcon imageIconLaporan = new javax.swing.ImageIcon(getClass().getResource("/assets/file-text.png")); // load the image to a imageIcon
         Image imageLaporan = imageIconLaporan.getImage(); // transform it
         Image newimgLaporan = imageLaporan.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconLaporan = new ImageIcon(newimgLaporan);  // transform it back
@@ -325,9 +532,47 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarLaporanTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
         SidebarLaporanTitle.setForeground(new java.awt.Color(255, 255, 255));
         SidebarLaporanTitle.setText("Laporan");
+        SidebarLaporanTitle.setName("SidebarLaporan"); // NOI18N
         SidebarLaporan.add(SidebarLaporanTitle);
 
         Sidebar.add(SidebarLaporan);
+
+        SidebarLogout.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarLogout.setName("SidebarLaporan"); // NOI18N
+        SidebarLogout.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarLogout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarLogoutMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarLogoutMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarLogoutMouseEntered(evt);
+            }
+        });
+        SidebarLogout.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarLogoutIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarLogoutIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarLogoutIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarLogoutIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarLogoutIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarLogout.add(SidebarLogoutIcon);
+        ImageIcon imageIconLogout = new javax.swing.ImageIcon(getClass().getResource("/assets/logout.png")); // load the image to a imageIcon
+        Image imageLogout = imageIconLogout.getImage(); // transform it
+        Image newimgLogout = imageLogout.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconLogout = new ImageIcon(newimgLogout);  // transform it back
+        SidebarLogoutIcon.setIcon(imageIconLogout);
+
+        SidebarLogoutTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarLogoutTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarLogoutTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarLogoutTitle.setText("Logout");
+        SidebarLogoutTitle.setName("SidebarLaporan"); // NOI18N
+        SidebarLogout.add(SidebarLogoutTitle);
+
+        Sidebar.add(SidebarLogout);
 
         getContentPane().add(Sidebar, java.awt.BorderLayout.LINE_START);
 
@@ -347,10 +592,9 @@ public class MainFrame extends javax.swing.JFrame {
         HeaderUser.setText("Admin");
         HeaderBody.add(HeaderUser);
 
-        HeaderIcon.setIcon(new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/account_circle.png")); // NOI18N
         HeaderIcon.setPreferredSize(new java.awt.Dimension(26, 26));
         HeaderBody.add(HeaderIcon);
-        ImageIcon imageIconHeader = new javax.swing.ImageIcon("/Users/mac/NetBeansProjects/maven-app/src/main/java/assets/account_circle.png"); // load the image to a imageIcon
+        ImageIcon imageIconHeader = new javax.swing.ImageIcon(getClass().getResource("/assets/account_circle.png")); // load the image to a imageIcon
         Image imageHeader = imageIconHeader.getImage(); // transform it
         Image newimgHeader = imageHeader.getScaledInstance(26, 26,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIconHeader = new ImageIcon(newimgHeader);  // transform it back
@@ -370,11 +614,11 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public void mouseInMenu(JPanel myPanel) {
-        myPanel.setBackground(menuIn);
+        myPanel.setBackground(MENU_IN);
     }
     public void mouseOutMenu(JPanel myPanel) {
         if (myPanel.getName() != activedMenu) {
-            myPanel.setBackground(menuOut);   
+            myPanel.setBackground(MENU_OUT);   
         }
     }
     
@@ -395,10 +639,10 @@ public class MainFrame extends javax.swing.JFrame {
     public void openMenu(javax.swing.JPanel myPanel) {
         for (Iterator<Menu> iterator = menus.iterator(); iterator.hasNext();) {
             Menu next = iterator.next();
-            next.getMenu().setBackground(menuOut);
+            next.getMenu().setBackground(MENU_OUT);
             
             if (next.getMenu().getName() == myPanel.getName()) {
-                next.getMenu().setBackground(menuIn);
+                next.getMenu().setBackground(MENU_IN);
                 activedMenu = myPanel.getName();
                 Body.removeAll();
                 Body.repaint();
@@ -503,43 +747,115 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         openMenu(SidebarLaporan);
     }//GEN-LAST:event_SidebarLaporanMouseClicked
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+    private void SidebarAntrianMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAntrianMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarAntrian);
+    }//GEN-LAST:event_SidebarAntrianMouseClicked
+
+    private void SidebarAntrianMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAntrianMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarAntrian);
+    }//GEN-LAST:event_SidebarAntrianMouseExited
+
+    private void SidebarAntrianMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAntrianMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarAntrian);
+    }//GEN-LAST:event_SidebarAntrianMouseEntered
+
+    private void SidebarHasilPemeriksaanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarHasilPemeriksaanMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarHasilPemeriksaan);
+    }//GEN-LAST:event_SidebarHasilPemeriksaanMouseClicked
+
+    private void SidebarHasilPemeriksaanMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarHasilPemeriksaanMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarHasilPemeriksaan);
+    }//GEN-LAST:event_SidebarHasilPemeriksaanMouseExited
+
+    private void SidebarHasilPemeriksaanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarHasilPemeriksaanMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarHasilPemeriksaan);
+    }//GEN-LAST:event_SidebarHasilPemeriksaanMouseEntered
+
+    private void SidebarResepsionisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarResepsionisMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarResepsionis);
+    }//GEN-LAST:event_SidebarResepsionisMouseClicked
+
+    private void SidebarResepsionisMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarResepsionisMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarResepsionis);
+    }//GEN-LAST:event_SidebarResepsionisMouseExited
+
+    private void SidebarResepsionisMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarResepsionisMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarResepsionis);
+    }//GEN-LAST:event_SidebarResepsionisMouseEntered
+
+    private void SidebarApotekerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarApotekerMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarApoteker);
+    }//GEN-LAST:event_SidebarApotekerMouseClicked
+
+    private void SidebarApotekerMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarApotekerMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarApoteker);
+    }//GEN-LAST:event_SidebarApotekerMouseExited
+
+    private void SidebarApotekerMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarApotekerMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarApoteker);
+    }//GEN-LAST:event_SidebarApotekerMouseEntered
+
+    private void SidebarPimpinanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarPimpinanMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarPimpinan);
+    }//GEN-LAST:event_SidebarPimpinanMouseClicked
+
+    private void SidebarPimpinanMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarPimpinanMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarPimpinan);
+    }//GEN-LAST:event_SidebarPimpinanMouseExited
+
+    private void SidebarPimpinanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarPimpinanMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarPimpinan);
+    }//GEN-LAST:event_SidebarPimpinanMouseEntered
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        HeaderUser.setText(authentication.getName());
+    }//GEN-LAST:event_formWindowOpened
+
+    private void SidebarLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLogoutMouseClicked
+        // TODO add your handling code here:
+        int confirm = JOptionPane.showOptionDialog(
+                this,
+                "Anda Yakin?",
+                "Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, 
+                null,
+                null,
+                null
+        );
+        if (confirm == JOptionPane.YES_OPTION) {
+            dispose();
         }
-        //</editor-fold>
+    }//GEN-LAST:event_SidebarLogoutMouseClicked
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JFrame frame = new MainFrame();
-                frame.setVisible(true);
-            }
-        });
-    }
+    private void SidebarLogoutMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLogoutMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarLogout);
+    }//GEN-LAST:event_SidebarLogoutMouseExited
 
+    private void SidebarLogoutMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLogoutMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarLogout);
+    }//GEN-LAST:event_SidebarLogoutMouseEntered
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Body;
     private javax.swing.JLabel DashboardLabel;
@@ -549,9 +865,18 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel HeaderUser;
     private javax.swing.JPanel Main;
     private javax.swing.JPanel Sidebar;
+    private javax.swing.JPanel SidebarAntrian;
+    private javax.swing.JLabel SidebarAntrianIcon;
+    private javax.swing.JLabel SidebarAntrianTitle;
+    private javax.swing.JPanel SidebarApoteker;
+    private javax.swing.JLabel SidebarApotekerTitle;
+    private javax.swing.JLabel SidebarApotekerlcon;
     private javax.swing.JPanel SidebarDokter;
     private javax.swing.JLabel SidebarDokterIcon;
     private javax.swing.JLabel SidebarDokterTitle;
+    private javax.swing.JLabel SidebarDokterTitle1;
+    private javax.swing.JLabel SidebarHasilIcon;
+    private javax.swing.JPanel SidebarHasilPemeriksaan;
     private javax.swing.JPanel SidebarHome;
     private javax.swing.JLabel SidebarHomeIcon;
     private javax.swing.JLabel SidebarHomeTitle;
@@ -561,11 +886,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel SidebarLaporan;
     private javax.swing.JLabel SidebarLaporanIcon;
     private javax.swing.JLabel SidebarLaporanTitle;
+    private javax.swing.JPanel SidebarLogout;
+    private javax.swing.JLabel SidebarLogoutIcon;
+    private javax.swing.JLabel SidebarLogoutTitle;
     private javax.swing.JPanel SidebarObat;
     private javax.swing.JLabel SidebarObatIcon;
     private javax.swing.JLabel SidebarObatTitle;
     private javax.swing.JPanel SidebarPasien;
     private javax.swing.JLabel SidebarPasienIcon;
     private javax.swing.JLabel SidebarPasienTitle;
+    private javax.swing.JPanel SidebarPimpinan;
+    private javax.swing.JLabel SidebarPimpinanIcon;
+    private javax.swing.JLabel SidebarPimpinanTitle;
+    private javax.swing.JPanel SidebarResepsionis;
+    private javax.swing.JLabel SidebarResepsionisTitle;
+    private javax.swing.JLabel SidebarResepsionislcon;
     // End of variables declaration//GEN-END:variables
 }
