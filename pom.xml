@@ -12,11 +12,9 @@
     </properties>
     <distributionManagement>
         <repository>
-          <uniqueVersion>true</uniqueVersion>
-          <id>klinikerni</id>
-          <name>Klinikerni Repository</name>
-          <url>scp://repo/maven2</url>
-          <layout>default</layout>
+          <id>github</id>
+          <name>GitHub Packages</name>
+          <url>https://maven.pkg.github.com/nazordz/klinik-erni</url>
         </repository>
     </distributionManagement>
     <pluginRepositories>
