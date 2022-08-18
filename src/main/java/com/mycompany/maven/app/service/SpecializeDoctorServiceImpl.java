@@ -5,39 +5,31 @@
  */
 package com.mycompany.maven.app.service;
 
-import com.mycompany.maven.app.model.Patient;
+import com.mycompany.maven.app.model.SpecializeDoctor;
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 /**
  *
  * @author mac
  */
-public class PatientServiceImpl implements ICrudService<Patient>{
-
-    private static SessionFactory factory; 
-
-    public PatientServiceImpl() {
-        this.factory = new Configuration().configure().buildSessionFactory();
-    }
+public class SpecializeDoctorServiceImpl implements ICrudService<SpecializeDoctor> {
+    private static final SessionFactory factory = new Configuration().configure().buildSessionFactory();; 
+    
     @Override
-    public boolean insert(Patient data) {
+    public boolean insert(SpecializeDoctor data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
-        Long count = (Long) session.createQuery("SELECT count(*) from Patient").uniqueResult();
-        data.setPatientNumber(count.intValue() + 1);
         try {
             session.save(data);
             tx.commit();
             return true;
         } catch (Exception e) {
             tx.rollback();
-            
         } finally {
             session.close();
         }
@@ -45,23 +37,18 @@ public class PatientServiceImpl implements ICrudService<Patient>{
     }
 
     @Override
-    public boolean update(Patient data) {
+    public boolean update(SpecializeDoctor data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Patient pat = session.find(Patient.class, data.getId());
-            pat.setName(data.getName());
-//            pat.setPatientNumber(data.getPatientNumber());
-            pat.setAddress(data.getAddress());
-            pat.setBirthDate(data.getBirthDate());
-            pat.setBloodType(data.getBloodType());
-            pat.setGender(data.getGender());
-            session.save(pat);
+            SpecializeDoctor sd = session.find(SpecializeDoctor.class, data.getId());
+            sd.setName(data.getName());
+            sd.setCheckupFee(data.getCheckupFee());
+            session.save(sd);
             tx.commit();
             return true;
         } catch (Exception e) {
             tx.rollback();
-            
         } finally {
             session.close();
         }
@@ -73,42 +60,44 @@ public class PatientServiceImpl implements ICrudService<Patient>{
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Patient pat = session.find(Patient.class, id);
-            session.delete(pat);
+            Query query = session.createQuery("DELETE FROM SpecializeDoctor WHERE id = :id")
+                    .setParameter("id", id);
+            query.executeUpdate();
             tx.commit();
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             tx.rollback();
         }
         return false;
     }
 
     @Override
-    public Patient findById(String id) {
+    public SpecializeDoctor findById(String id) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Patient pat = session.find(Patient.class, id);
+            SpecializeDoctor specialize = session.find(SpecializeDoctor.class, id);
             tx.commit();
-            return pat;
-        } catch(Exception e) {
+            return specialize;
+        } catch (Exception e) {
             tx.rollback();
+        } finally {
+            session.close();
         }
         return null;
     }
 
     @Override
-    public List<Patient> findAll() {
+    public List<SpecializeDoctor> findAll() {
         Session session = factory.openSession();
-        Transaction tx = null;
+        Transaction tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
-            List<Patient> data = session.createQuery("FROM Patient", Patient.class).list();
+            List<SpecializeDoctor> listSpecialize = session.createQuery("FROM SpecializeDoctor", SpecializeDoctor.class).list();
             tx.commit();
-            return data;
-        } catch (HibernateException e) {
-            e.printStackTrace();
-        } finally{
+            return listSpecialize;
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
             session.close();
         }
         return null;

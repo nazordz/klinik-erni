@@ -7,7 +7,7 @@ package com.mycompany.maven.app.service;
 
 import com.mycompany.maven.app.model.Doctor;
 import java.util.List;
-import java.util.Optional;
+import javax.persistence.NoResultException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -49,8 +49,11 @@ public class DoctorServiceImpl implements ICrudService<Doctor>, IFindByEmailServ
             dokter.setStrNumber(p.getStrNumber());
             dokter.setBirthDate(p.getBirthDate());
             dokter.setAddress(p.getAddress());
-            dokter.setSpecialization(p.getSpecialization());
+//            dokter.setSpecialization(p.getSpecialization());
             dokter.setGender(p.getGender());
+            if (p.getPassword() != null) {
+                dokter.setPassword(p.getPassword());
+            }
             session.save(dokter);
             tx.commit();
         } catch (HibernateException e) {
@@ -84,7 +87,19 @@ public class DoctorServiceImpl implements ICrudService<Doctor>, IFindByEmailServ
 
     @Override
     public Doctor findById(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Doctor doctor = session.find(Doctor.class, id);            
+            tx.commit();
+            return doctor;
+        } catch (NullPointerException e) {}
+        catch (HibernateException e) {
+            System.out.println("Err: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -110,13 +125,10 @@ public class DoctorServiceImpl implements ICrudService<Doctor>, IFindByEmailServ
         try {
             Query query = session.createQuery("FROM Doctor WHERE email = :email");
             query.setParameter("email", email);
-            Optional<Doctor> doctor = (Optional<Doctor>) query.getSingleResult();
+            Doctor doctor = (Doctor) query.getSingleResult();
             tx.commit();
-            return doctor.orElse(null);
-        } catch (HibernateException e) {
-            System.out.println("Err: " + e.getMessage());
-            e.printStackTrace();
-            tx.rollback();
+            return doctor;
+        } catch (NoResultException e) {
         } finally {
             session.close();
         }

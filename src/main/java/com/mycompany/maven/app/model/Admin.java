@@ -7,14 +7,10 @@ package com.mycompany.maven.app.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,36 +22,35 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author mac
  */
 @Entity
-@Table(name = "patient_checkup_medicines")
+@Table(name = "admins")
 @Data
-public class PatientCheckupMedicine implements Serializable {
+public class Admin implements Serializable {
+    
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
     @GeneratedValue(generator = "UUID4")
     private String id;
     
-    @Column(name = "medicine_id")
-    private String medicineId;
+    @Column(nullable = false)
+    private String name;
     
-    @Column(name = "patient_checkup_id")
-    private String patientCheckupId;
+    @Column
+    private String address;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false, unique = true)
+    private String phone;
     
     @Column(nullable = false)
-    private Integer quantity;
+    private String password;
     
-    @ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER ,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "medicine_id", insertable = false, updatable = false)
-    private Medicine medicine;
-    
-    @ManyToOne(targetEntity = PatientCheckup.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_checkup_id", insertable = false, updatable = false)
-    private PatientCheckup patientCheckup;
-    
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false, nullable = false)
     @CreationTimestamp
     private Timestamp createdAt;
     
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Timestamp updatedAt;
 }

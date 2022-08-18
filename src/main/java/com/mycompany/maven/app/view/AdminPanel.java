@@ -5,8 +5,8 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.model.Leader;
-import com.mycompany.maven.app.service.LeaderServiceImpl;
+import com.mycompany.maven.app.model.Admin;
+import com.mycompany.maven.app.service.AdminServiceImpl;
 import com.mycompany.maven.app.util.UpdatableBCrypt;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -16,17 +16,16 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author mac
  */
-public class PimpinanPanel extends javax.swing.JPanel {
+public class AdminPanel extends javax.swing.JPanel {
 
-    private final LeaderServiceImpl leaderService;
+    private final AdminServiceImpl adminService = new AdminServiceImpl();
     private static final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
     private String selectedId;
     /**
      * Creates new form ResepsionisPanel
      */
-    public PimpinanPanel() {
+    public AdminPanel() {
         initComponents();
-        this.leaderService = new LeaderServiceImpl();
         getTableData();
         PasswordTitle.setVisible(false);
         PasswordInput.setVisible(false);
@@ -35,8 +34,8 @@ public class PimpinanPanel extends javax.swing.JPanel {
     public void getTableData() {
         DefaultTableModel tm = (DefaultTableModel) TableRecepsionist.getModel();
         tm.setRowCount(0);
-        List<Leader> receptionist = leaderService.findAll();
-        for (Leader rcp : receptionist) {
+        List<Admin> admin = adminService.findAll();
+        for (Admin rcp : admin) {
             Object[] row = {
                 rcp.getId(),
                 rcp.getName(),
@@ -58,7 +57,7 @@ public class PimpinanPanel extends javax.swing.JPanel {
     }
 
     public void store() {
-        Leader pharma = new Leader();
+        Admin pharma = new Admin();
         pharma.setName(NameInput.getText());
         pharma.setEmail(EmailInput.getText());
         pharma.setPhone(PhoneInput.getText());
@@ -68,14 +67,14 @@ public class PimpinanPanel extends javax.swing.JPanel {
         }
         if (selectedId != null) {
             pharma.setId(selectedId);
-            leaderService.update(pharma);
+            adminService.update(pharma);
         }else {
-            leaderService.insert(pharma);
+            adminService.insert(pharma);
         }
     }
     
     public void delete() {
-        leaderService.delete(selectedId);
+        adminService.delete(selectedId);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -106,6 +105,7 @@ public class PimpinanPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         TableRecepsionist = new javax.swing.JTable();
 
+        setName("admin"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
         jLabel1.setText("Nama");
@@ -287,7 +287,7 @@ public class PimpinanPanel extends javax.swing.JPanel {
     private void TableRecepsionistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableRecepsionistMouseClicked
         // TODO add your handling code here:
         this.selectedId = TableRecepsionist.getModel().getValueAt(TableRecepsionist.getSelectedRow(), 0).toString();
-        Leader recep = leaderService.findById(selectedId);
+        Admin recep = adminService.findById(selectedId);
         NameInput.setText(recep.getName());
         EmailInput.setText(recep.getEmail());
         PhoneInput.setText(recep.getPhone());

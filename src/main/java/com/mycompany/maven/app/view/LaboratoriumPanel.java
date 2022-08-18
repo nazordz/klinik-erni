@@ -5,8 +5,11 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.model.Leader;
-import com.mycompany.maven.app.service.LeaderServiceImpl;
+import com.mycompany.maven.app.model.Laboratorium;
+import com.mycompany.maven.app.model.LaboratoriumDivision;
+import com.mycompany.maven.app.service.LabDivisionServiceImpl;
+import com.mycompany.maven.app.service.LaboratoriumServiceImpl;
+import com.mycompany.maven.app.util.ComboItem;
 import com.mycompany.maven.app.util.UpdatableBCrypt;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -16,35 +19,44 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author mac
  */
-public class PimpinanPanel extends javax.swing.JPanel {
+public class LaboratoriumPanel extends javax.swing.JPanel {
 
-    private final LeaderServiceImpl leaderService;
-    private static final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
+    private final LaboratoriumServiceImpl labService = new LaboratoriumServiceImpl();
+    private final LabDivisionServiceImpl labDivisionService = new LabDivisionServiceImpl();
+    private final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
+    private final MainFrame mainFrame;
     private String selectedId;
     /**
      * Creates new form ResepsionisPanel
      */
-    public PimpinanPanel() {
+    public LaboratoriumPanel(MainFrame mainFrame) {
         initComponents();
-        this.leaderService = new LeaderServiceImpl();
         getTableData();
+        getLabDivision();
+        this.mainFrame = mainFrame;
         PasswordTitle.setVisible(false);
         PasswordInput.setVisible(false);
     }
     
     public void getTableData() {
-        DefaultTableModel tm = (DefaultTableModel) TableRecepsionist.getModel();
+        DefaultTableModel tm = (DefaultTableModel) TableLab.getModel();
         tm.setRowCount(0);
-        List<Leader> receptionist = leaderService.findAll();
-        for (Leader rcp : receptionist) {
-            Object[] row = {
-                rcp.getId(),
-                rcp.getName(),
-                rcp.getEmail(),
-                rcp.getPhone()
-            };
-            tm.addRow(row);
+        try {
+            List<Laboratorium> Laboratoriums = labService.findAll();
+            for (Laboratorium rcp : Laboratoriums) {
+                Object[] row = {
+                    rcp.getId(),
+                    rcp.getName(),
+                    rcp.getEmail(),
+                    rcp.getPhone(),
+                    rcp.getDivision().getName(),
+                    rcp.getCreatedAt().toString()
+                };
+                tm.addRow(row);
+            }
+        } catch (NullPointerException e) {
         }
+        
     }
     
     public void resetForm() {
@@ -58,24 +70,39 @@ public class PimpinanPanel extends javax.swing.JPanel {
     }
 
     public void store() {
-        Leader pharma = new Leader();
-        pharma.setName(NameInput.getText());
-        pharma.setEmail(EmailInput.getText());
-        pharma.setPhone(PhoneInput.getText());
-        pharma.setAddress(AddressInput.getText());
+        Laboratorium labUser = new Laboratorium();
+        labUser.setName(NameInput.getText());
+        labUser.setEmail(EmailInput.getText());
+        labUser.setPhone(PhoneInput.getText());
+        labUser.setAddress(AddressInput.getText());
+        ComboItem divisionItem = (ComboItem) SelectDivision.getSelectedItem();
+        labUser.setDivisionId(divisionItem.getValue());
         if (PasswordCheck.isSelected()) {
-            pharma.setPassword(bcrypt.hash(new String(PasswordInput.getPassword())));
+            labUser.setPassword(bcrypt.hash(new String(PasswordInput.getPassword())));
         }
         if (selectedId != null) {
-            pharma.setId(selectedId);
-            leaderService.update(pharma);
+            labUser.setId(selectedId);
+            labService.update(labUser);
         }else {
-            leaderService.insert(pharma);
+            labService.insert(labUser);
         }
     }
     
-    public void delete() {
-        leaderService.delete(selectedId);
+    public void delete() {  
+        labService.delete(selectedId);
+    }
+    public void getLabDivision() {
+        try {
+            SelectDivision.removeAllItems();
+            List<LaboratoriumDivision> division = labDivisionService.findAll();
+            for (LaboratoriumDivision div : division) {
+                SelectDivision.addItem(
+                    new ComboItem(div.getName(), div.getId())
+                );
+            }   
+        } catch (NullPointerException e) {
+        }
+        
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -102,10 +129,14 @@ public class PimpinanPanel extends javax.swing.JPanel {
         PasswordCheck = new javax.swing.JCheckBox();
         PasswordTitle = new javax.swing.JLabel();
         PasswordInput = new javax.swing.JPasswordField();
+        jButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        SelectDivision = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        TableRecepsionist = new javax.swing.JTable();
+        TableLab = new javax.swing.JTable();
 
+        setName("admin"); // NOI18N
         setLayout(new java.awt.BorderLayout());
 
         jLabel1.setText("Nama");
@@ -155,27 +186,44 @@ public class PimpinanPanel extends javax.swing.JPanel {
 
         PasswordTitle.setText("Password");
 
+        jButton1.setText("Bagian Lab");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Bagian");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BtnSave)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(EmailInput)
-                    .addComponent(NameInput)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(EmailInput)
+                            .addComponent(NameInput)
+                            .addComponent(PhoneInput, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                            .addComponent(SelectDivision, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(BtnSave)
+                        .addGap(3, 3, 3)
                         .addComponent(BtnReset)
-                        .addGap(18, 18, 18)
-                        .addComponent(BtnDelete))
-                    .addComponent(PhoneInput, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BtnDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(PasswordCheck)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -211,51 +259,51 @@ public class PimpinanPanel extends javax.swing.JPanel {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(PasswordCheck)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(PasswordTitle)
-                            .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(BtnSave)
-                            .addComponent(BtnReset)
-                            .addComponent(BtnDelete))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(PasswordTitle)
+                    .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(SelectDivision, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnSave)
+                    .addComponent(BtnReset)
+                    .addComponent(BtnDelete)
+                    .addComponent(jButton1))
+                .addGap(23, 23, 23))
         );
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
-        TableRecepsionist.setModel(new javax.swing.table.DefaultTableModel(
+        TableLab.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "id", "Nama", "Email", "No. Telepon"
+                "id", "Nama", "Email", "No. Telepon", "Bagian", "Dibuat"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        TableRecepsionist.removeColumn(TableRecepsionist.getColumnModel().getColumn(0));
-        TableRecepsionist.addMouseListener(new java.awt.event.MouseAdapter() {
+        TableLab.removeColumn(TableLab.getColumnModel().getColumn(0));
+        TableLab.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TableRecepsionistMouseClicked(evt);
+                TableLabMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(TableRecepsionist);
+        jScrollPane2.setViewportView(TableLab);
 
         jPanel2.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
@@ -266,6 +314,7 @@ public class PimpinanPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         resetForm();
         getTableData();
+        getLabDivision();
     }//GEN-LAST:event_BtnResetActionPerformed
 
     private void PasswordCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordCheckActionPerformed
@@ -284,15 +333,16 @@ public class PimpinanPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_PasswordCheckItemStateChanged
 
-    private void TableRecepsionistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableRecepsionistMouseClicked
+    private void TableLabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableLabMouseClicked
         // TODO add your handling code here:
-        this.selectedId = TableRecepsionist.getModel().getValueAt(TableRecepsionist.getSelectedRow(), 0).toString();
-        Leader recep = leaderService.findById(selectedId);
+        this.selectedId = TableLab.getModel().getValueAt(TableLab.getSelectedRow(), 0).toString();
+        Laboratorium recep = labService.findById(selectedId);
         NameInput.setText(recep.getName());
         EmailInput.setText(recep.getEmail());
         PhoneInput.setText(recep.getPhone());
         AddressInput.setText(recep.getAddress());
-    }//GEN-LAST:event_TableRecepsionistMouseClicked
+        SelectDivision.getModel().setSelectedItem(new ComboItem(recep.getDivision().getName(), recep.getDivision().getId()));
+    }//GEN-LAST:event_TableLabMouseClicked
 
     private void BtnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSaveActionPerformed
         // TODO add your handling code here:
@@ -321,6 +371,11 @@ public class PimpinanPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_BtnDeleteActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        mainFrame.navigate("labDivision");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea AddressInput;
@@ -333,11 +388,14 @@ public class PimpinanPanel extends javax.swing.JPanel {
     private javax.swing.JPasswordField PasswordInput;
     private javax.swing.JLabel PasswordTitle;
     private javax.swing.JTextField PhoneInput;
-    private javax.swing.JTable TableRecepsionist;
+    private javax.swing.JComboBox<ComboItem> SelectDivision;
+    private javax.swing.JTable TableLab;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

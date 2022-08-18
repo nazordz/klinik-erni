@@ -7,7 +7,7 @@ package com.mycompany.maven.app.service;
 
 import com.mycompany.maven.app.model.Leader;
 import java.util.List;
-import java.util.Optional;
+import javax.persistence.NoResultException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,7 +19,7 @@ import org.hibernate.query.Query;
  * @author mac
  */
 public class LeaderServiceImpl implements ICrudService<Leader>, IFindByEmailService<Leader> {
-private static SessionFactory factory; 
+    private static SessionFactory factory; 
 
     public LeaderServiceImpl() {
         this.factory = new Configuration().configure().buildSessionFactory();
@@ -125,13 +125,10 @@ private static SessionFactory factory;
         try {
             Query query = session.createQuery("FROM Leader WHERE email = :email");
             query.setParameter("email", email);
-            Optional<Leader> lead = (Optional<Leader>) query.getSingleResult();
+            Leader lead = (Leader) query.getSingleResult();
             tx.commit();
-            return lead.orElse(null);
-        } catch (javax.persistence.NoResultException e)  {}
-        catch (HibernateException e) {
-            e.printStackTrace();
-            tx.rollback();
+            return lead;
+        } catch (NoResultException e) {
         } finally {
             session.close();
         }

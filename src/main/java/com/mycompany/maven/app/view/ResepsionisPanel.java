@@ -64,7 +64,7 @@ public class ResepsionisPanel extends javax.swing.JPanel {
         recep.setPhone(PhoneInput.getText());
         recep.setAddress(AddressInput.getText());
         if (PasswordCheck.isSelected()) {
-            recep.setPassword(bcrypt.hash(PasswordInput.getPassword().toString()));
+            recep.setPassword(bcrypt.hash(new String(PasswordInput.getPassword())));
         }
         if (selectedId != null) {
             recep.setId(selectedId);

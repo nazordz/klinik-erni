@@ -5,7 +5,7 @@
  */
 package com.mycompany.maven.app.service;
 
-import com.mycompany.maven.app.model.Receptionist;
+import com.mycompany.maven.app.model.Admin;
 import java.util.List;
 import javax.persistence.NoResultException;
 import org.hibernate.HibernateException;
@@ -14,22 +14,20 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+
 /**
  *
  * @author mac
  */
-public class ReceptionistServiceImpl implements ICrudService<Receptionist>, IFindByEmailService<Receptionist> {
-private static SessionFactory factory; 
-
-    public ReceptionistServiceImpl() {
-        this.factory = new Configuration().configure().buildSessionFactory();
-    }
+public class AdminServiceImpl implements ICrudService<Admin>, IFindByEmailService<Admin>{
+    private static final SessionFactory factory = new Configuration().configure().buildSessionFactory(); 
+    
     @Override
-    public boolean insert(Receptionist data) {
+    public boolean insert(Admin p) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            session.save(data);
+            session.save(p);
             tx.commit();
             return true;
         } catch (HibernateException e) {
@@ -42,24 +40,25 @@ private static SessionFactory factory;
     }
 
     @Override
-    public boolean update(Receptionist data) {
+    public boolean update(Admin data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, data.getId());
-            recep.setName(data.getName());
-            recep.setEmail(data.getEmail());
-            recep.setPhone(data.getPhone());
-            recep.setAddress(data.getAddress());
+            Admin admin = session.find(Admin.class, data.getId());
+            admin.setName(data.getName());
+            admin.setEmail(data.getEmail());
+            admin.setPhone(data.getPhone());
+            admin.setAddress(data.getAddress());
             if (data.getPassword() != null) {
-                recep.setPassword(data.getPassword());
+                admin.setPassword(data.getPassword());
             }
-            session.save(recep);
+            session.save(admin);
             tx.commit();
-            return true;
         } catch (HibernateException e) {
+            System.err.println("Gagal");
+            e.printStackTrace();
             tx.rollback();
-            e.printStackTrace(); 
+            return false;
         } finally {
             session.close();
         }
@@ -71,8 +70,8 @@ private static SessionFactory factory;
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, id);
-            session.delete(recep);
+            Admin admin = session.get(Admin.class, id);
+            session.delete(admin);
             tx.commit();
         } catch (HibernateException e) {
             System.err.println(e.getMessage());
@@ -85,16 +84,16 @@ private static SessionFactory factory;
     }
 
     @Override
-    public Receptionist findById(String id) {
+    public Admin findById(String id) {
         Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, id);
+            Transaction tx = session.beginTransaction();
+            Admin admin = session.find(Admin.class, id);
             tx.commit();
-            return recep;
-        } catch (Exception e) {
+            return admin;
+        } catch (HibernateException e) {
+            System.out.println("Err: " + e.getMessage());
             e.printStackTrace();
-            tx.rollback();
         } finally {
             session.close();
         }
@@ -102,16 +101,17 @@ private static SessionFactory factory;
     }
 
     @Override
-    public List<Receptionist> findAll() {
+    public List<Admin> findAll() {
         Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
+        Transaction tx = null;
         try {
-            List<Receptionist> receps = session.createQuery("FROM Receptionist", Receptionist.class).list();
+            tx = session.beginTransaction();
+            List<Admin> admins = session.createQuery("FROM Admin", Admin.class).list();            
             tx.commit();
-            return receps;
-        } catch (Exception e) {
+            return admins;
+        } catch (HibernateException e) {
+            System.out.println("Err: " + e.getMessage());
             e.printStackTrace();
-            tx.rollback();
         } finally {
             session.close();
         }
@@ -119,15 +119,15 @@ private static SessionFactory factory;
     }
 
     @Override
-    public Receptionist findByEmail(String email) {
+    public Admin findByEmail(String email) {
         Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
+        Transaction tx = session.beginTransaction();;
         try {
-            Query query = session.createQuery("FROM Receptionist WHERE email = :email");
+            Query query = session.createQuery("FROM Admin WHERE email = :email", Admin.class);
             query.setParameter("email", email);
-            Receptionist recep = (Receptionist) query.getSingleResult();
+            Admin admin = (Admin) query.getSingleResult();
             tx.commit();
-            return recep;
+            return admin;
         } catch (NoResultException e) {
         } finally {
             session.close();

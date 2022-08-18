@@ -6,15 +6,17 @@
 package com.mycompany.maven.app.view;
 
 import com.mycompany.maven.app.enumeration.GenderType;
-import com.mycompany.maven.app.enumeration.SpecializationType;
 import com.mycompany.maven.app.koneksi;
 import com.mycompany.maven.app.model.Doctor;
+import com.mycompany.maven.app.model.SpecializeDoctor;
 import com.mycompany.maven.app.service.DoctorServiceImpl;
+import com.mycompany.maven.app.service.SpecializeDoctorServiceImpl;
 import com.mycompany.maven.app.util.UpdatableBCrypt;
+import com.mycompany.maven.app.util.ComboItem;
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -34,15 +36,26 @@ import org.hibernate.HibernateException;
 public class DokterPanel extends javax.swing.JPanel {
     private String editedId = "";
     private final DoctorServiceImpl doctorService;
-    private static final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
+    private final UpdatableBCrypt bcrypt;
+    private final MainFrame mainFrame;
+    private final SpecializeDoctorServiceImpl specializeDoctorServiceImpl;
 
     /**
      * Creates new form DokterPanel
      */
-    public DokterPanel() {
+    public DokterPanel(
+        UpdatableBCrypt bcrypt,
+        DoctorServiceImpl doctorService,
+        MainFrame mainFrame,
+        SpecializeDoctorServiceImpl specializeDoctorServiceImpl
+    ) {
         initComponents();
-        this.doctorService = new DoctorServiceImpl();
+        this.doctorService = doctorService;
+        this.bcrypt = bcrypt;
+        this.mainFrame = mainFrame;
+        this.specializeDoctorServiceImpl = specializeDoctorServiceImpl;
         getDataTable();
+        getSpecializes();
         PasswordTitle.setVisible(false);
         PasswordInput.setVisible(false);
     }
@@ -74,7 +87,12 @@ public class DokterPanel extends javax.swing.JPanel {
         PasswordCheck = new javax.swing.JCheckBox();
         PasswordInput = new javax.swing.JPasswordField();
         PasswordTitle = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        EmailInput = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        PhoneField = new javax.swing.JTextField();
         Buttons = new javax.swing.JPanel();
+        ListSpecialistButton = new javax.swing.JButton();
         Print = new javax.swing.JButton();
         ResetButton = new javax.swing.JButton();
         RefreshButton = new javax.swing.JButton();
@@ -84,7 +102,7 @@ public class DokterPanel extends javax.swing.JPanel {
         TableScroll = new javax.swing.JScrollPane();
         TableDoctor = new javax.swing.JTable();
 
-        setLayout(new java.awt.GridLayout(2, 0));
+        setLayout(new java.awt.BorderLayout());
 
         Body.setLayout(new java.awt.BorderLayout());
 
@@ -122,7 +140,6 @@ public class DokterPanel extends javax.swing.JPanel {
         GenderSelect.setModel(new javax.swing.DefaultComboBoxModel<>(GenderType.values()));
 
         SpecializationSelect.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
-        SpecializationSelect.setModel(new javax.swing.DefaultComboBoxModel<>(SpecializationType.values()));
 
         jScrollPane1.setViewportView(AddressField);
 
@@ -140,6 +157,16 @@ public class DokterPanel extends javax.swing.JPanel {
 
         PasswordTitle.setText("Password");
 
+        jLabel1.setText("Email");
+
+        EmailInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EmailInputActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("No. Telepon");
+
         javax.swing.GroupLayout FormsLayout = new javax.swing.GroupLayout(Forms);
         Forms.setLayout(FormsLayout);
         FormsLayout.setHorizontalGroup(
@@ -150,34 +177,39 @@ public class DokterPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(StrField)
                     .addComponent(NameField)
                     .addComponent(BirthDatePicker, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1)
+                    .addComponent(PhoneField))
                 .addGap(53, 53, 53)
-                .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(FormsLayout.createSequentialGroup()
-                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(SpecializationSelect, 0, 89, Short.MAX_VALUE)
-                            .addComponent(GenderSelect, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(PasswordCheck)
                     .addGroup(FormsLayout.createSequentialGroup()
                         .addComponent(PasswordTitle)
                         .addGap(34, 34, 34)
-                        .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(FormsLayout.createSequentialGroup()
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(EmailInput)
+                            .addComponent(GenderSelect, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(SpecializationSelect, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(109, Short.MAX_VALUE))
         );
         FormsLayout.setVerticalGroup(
             FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(FormsLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addGap(16, 16, 16)
                 .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
@@ -197,30 +229,48 @@ public class DokterPanel extends javax.swing.JPanel {
                         .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FormsLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(BirthDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(FormsLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)))
-                    .addGroup(FormsLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(EmailInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(7, 7, 7)
                         .addComponent(PasswordCheck)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(PasswordTitle)
-                            .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(PasswordInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(FormsLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(BirthDatePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15)
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(PhoneField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         Body.add(Forms, java.awt.BorderLayout.CENTER);
 
         Buttons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
+        ListSpecialistButton.setText("Daftar Spesialisasi");
+        ListSpecialistButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ListSpecialistButtonMouseClicked(evt);
+            }
+        });
+        ListSpecialistButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ListSpecialistButtonActionPerformed(evt);
+            }
+        });
+        Buttons.add(ListSpecialistButton);
 
         Print.setText("Cetak");
         Print.addActionListener(new java.awt.event.ActionListener() {
@@ -265,9 +315,11 @@ public class DokterPanel extends javax.swing.JPanel {
 
         Body.add(Buttons, java.awt.BorderLayout.SOUTH);
 
-        add(Body);
+        add(Body, java.awt.BorderLayout.CENTER);
 
         TableContainer.setLayout(new java.awt.BorderLayout());
+
+        TableScroll.setPreferredSize(new java.awt.Dimension(452, 202));
 
         TableDoctor.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -298,7 +350,7 @@ public class DokterPanel extends javax.swing.JPanel {
 
         TableContainer.add(TableScroll, java.awt.BorderLayout.CENTER);
 
-        add(TableContainer);
+        add(TableContainer, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     public void getDataTable() {
@@ -311,7 +363,7 @@ public class DokterPanel extends javax.swing.JPanel {
                     next.getStrNumber(),
                     next.getName(),
                     next.getBirthDate(),
-                    next.getSpecialization(),
+                    next.getSpecialize().getName(),
                     next.getGender(),
                     next.getAddress(),
                     next.getCreatedAt()
@@ -331,7 +383,15 @@ public class DokterPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_BirthDatePickerPropertyChange
 
-    public void refreshTable() {
+    private void getSpecializes() {
+        List<SpecializeDoctor> specialize = specializeDoctorServiceImpl.findAll();
+        SpecializationSelect.removeAllItems();
+        for (SpecializeDoctor sd : specialize) {
+            SpecializationSelect.addItem(new ComboItem(sd.getName(), sd.getId()));
+        }
+    }
+    
+    private void refreshTable() {
         DefaultTableModel tm = (DefaultTableModel) TableDoctor.getModel();
         getDataTable();
         tm.fireTableDataChanged();
@@ -341,6 +401,7 @@ public class DokterPanel extends javax.swing.JPanel {
     private void RefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshButtonActionPerformed
         // TODO add your handling code here:
         refreshTable();
+        getSpecializes();
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
@@ -352,21 +413,30 @@ public class DokterPanel extends javax.swing.JPanel {
         dokter.setAddress(AddressField.getText());
         GenderType selectedType = (GenderType) GenderSelect.getSelectedItem();
         dokter.setGender(selectedType);
-        SpecializationType spesType = (SpecializationType) SpecializationSelect.getSelectedItem();
-        dokter.setSpecialization(spesType);
+        ComboItem item = (ComboItem) SpecializationSelect.getSelectedItem();
+        String specializeId = item.getValue();
+        dokter.setSpecializeDoctorId(specializeId);
+        dokter.setEmail(EmailInput.getText());
+        dokter.setPhone(PhoneField.getText());
         if (PasswordCheck.isSelected()) {
-            dokter.setPassword(bcrypt.hash(PasswordInput.getPassword().toString()));
+            dokter.setPassword(bcrypt.hash(new String(PasswordInput.getPassword())));
         }
+        boolean isSaved = false;
         if (editedId.isEmpty()) {
-            doctorService.insert(dokter);    
+            isSaved = doctorService.insert(dokter);    
         } else {
             dokter.setId(editedId);
-            doctorService.update(dokter);
+            isSaved = doctorService.update(dokter);
         }
         
-        refreshTable();
-        resetForm();
-        JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
+        if (isSaved) {
+            refreshTable();
+            resetForm();
+            JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Gagal disimpan!");
+        }
+        
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void resetForm() {
@@ -376,8 +446,12 @@ public class DokterPanel extends javax.swing.JPanel {
         AddressField.setText("");
         GenderSelect.setSelectedIndex(0);
         SpecializationSelect.setSelectedIndex(0);
+        EmailInput.setText("");
+        PasswordInput.setText("");
+        PasswordCheck.setSelected(false);
         this.editedId = "";
         this.RemoveButton.setVisible(false);
+        getSpecializes();
     }
     
     private void ResetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetButtonActionPerformed
@@ -389,19 +463,6 @@ public class DokterPanel extends javax.swing.JPanel {
         cal.setTime(date);
         return cal;
     }
-    private void TableDoctorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDoctorMouseClicked
-        // TODO add your handling code here:
-        int row = TableDoctor.getSelectedRow();
-        this.editedId = TableDoctor.getModel().getValueAt(row, 0).toString();
-        StrField.setText(TableDoctor.getModel().getValueAt(row, 1).toString());
-        NameField.setText(TableDoctor.getModel().getValueAt(row, 2).toString());
-        BirthDatePicker.setDate((java.util.Date) TableDoctor.getModel().getValueAt(row, 3));
-        SpecializationSelect.getModel().setSelectedItem((SpecializationType) TableDoctor.getModel().getValueAt(row, 4));
-        GenderSelect.getModel().setSelectedItem(TableDoctor.getModel().getValueAt(row, 5));
-        AddressField.setText(TableDoctor.getModel().getValueAt(row, 6).toString());
-        this.RemoveButton.setVisible(true);
-    }//GEN-LAST:event_TableDoctorMouseClicked
-
     private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
         // TODO add your handling code here:
         int confirm = JOptionPane.showOptionDialog(
@@ -459,28 +520,64 @@ public class DokterPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_PasswordCheckActionPerformed
 
+    private void ListSpecialistButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListSpecialistButtonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ListSpecialistButtonMouseClicked
+
+    private void ListSpecialistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ListSpecialistButtonActionPerformed
+        // TODO add your handling code here:
+        this.mainFrame.navigate("specializeDoctor");
+    }//GEN-LAST:event_ListSpecialistButtonActionPerformed
+
+    private void EmailInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EmailInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EmailInputActionPerformed
+
+    private void TableDoctorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDoctorMouseClicked
+        // TODO add your handling code here:
+        int row = TableDoctor.getSelectedRow();
+        this.editedId = TableDoctor.getModel().getValueAt(row, 0).toString();
+        Doctor myDoctor = this.doctorService.findById(editedId);
+        StrField.setText(myDoctor.getStrNumber());
+        NameField.setText(myDoctor.getName());
+        BirthDatePicker.setDate(myDoctor.getBirthDate());
+        SpecializationSelect.getModel().setSelectedItem(
+            new ComboItem(myDoctor.getSpecialize().getName(), myDoctor.getSpecialize().getId())
+        );
+        GenderSelect.getModel().setSelectedItem(myDoctor.getGender());
+        AddressField.setText(myDoctor.getAddress());
+        PhoneField.setText(myDoctor.getPhone());
+        EmailInput.setText(myDoctor.getEmail());
+        this.RemoveButton.setVisible(true);
+    }//GEN-LAST:event_TableDoctorMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane AddressField;
     private com.toedter.calendar.JDateChooser BirthDatePicker;
     private javax.swing.JPanel Body;
     private javax.swing.JPanel Buttons;
+    private javax.swing.JTextField EmailInput;
     private javax.swing.JPanel Forms;
     private javax.swing.JComboBox<GenderType> GenderSelect;
+    private javax.swing.JButton ListSpecialistButton;
     private javax.swing.JTextField NameField;
     private javax.swing.JCheckBox PasswordCheck;
     private javax.swing.JPasswordField PasswordInput;
     private javax.swing.JLabel PasswordTitle;
+    private javax.swing.JTextField PhoneField;
     private javax.swing.JButton Print;
     private javax.swing.JButton RefreshButton;
     private javax.swing.JToggleButton RemoveButton;
     private javax.swing.JButton ResetButton;
     private javax.swing.JButton SaveButton;
-    private javax.swing.JComboBox<SpecializationType> SpecializationSelect;
+    private javax.swing.JComboBox<ComboItem> SpecializationSelect;
     private javax.swing.JTextField StrField;
     private javax.swing.JPanel TableContainer;
     private javax.swing.JTable TableDoctor;
     private javax.swing.JScrollPane TableScroll;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

@@ -4,8 +4,18 @@
  * and open the template in the editor.
  */
 package com.mycompany.maven.app.view;
+import com.mycompany.maven.app.MainProgram;
 import com.mycompany.maven.app.model.Authentication;
 import com.mycompany.maven.app.model.Menu;
+import com.mycompany.maven.app.service.DoctorServiceImpl;
+import com.mycompany.maven.app.service.LabDivisionServiceImpl;
+import com.mycompany.maven.app.service.LaboratoriumServiceImpl;
+import com.mycompany.maven.app.service.MedicineServiceImpl;
+import com.mycompany.maven.app.service.PatientCheckupMedicineService;
+import com.mycompany.maven.app.service.PatientCheckupServiceImpl;
+import com.mycompany.maven.app.service.PatientServiceImpl;
+import com.mycompany.maven.app.service.SpecializeDoctorServiceImpl;
+import com.mycompany.maven.app.util.UpdatableBCrypt;
 import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -31,31 +41,21 @@ public class MainFrame extends javax.swing.JFrame {
     Color MENU_IN = new Color(44, 61, 79);
     Color MENU_OUT = new Color(52,73,94);
     String activedMenu = "SidebarHome";
+    
+    private final DoctorServiceImpl doctorService = new DoctorServiceImpl();
+    private final PatientServiceImpl patientService = new PatientServiceImpl();
+    private final PatientCheckupServiceImpl patientCheckupService = new PatientCheckupServiceImpl();
+    private final MedicineServiceImpl medicineService = new MedicineServiceImpl();
+    private final PatientCheckupMedicineService patientCheckupMedicineService = new PatientCheckupMedicineService();
+    private final SpecializeDoctorServiceImpl specializeDoctorService = new SpecializeDoctorServiceImpl();
+    private final LaboratoriumServiceImpl labService = new LaboratoriumServiceImpl();
+    private final LabDivisionServiceImpl labDivsionService = new LabDivisionServiceImpl();
+    private final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
-        menus.add(new Menu("home", SidebarHome, new HomePanel()));
-        menus.add(new Menu("dokter", SidebarDokter, new DokterPanel()));
-        
-        PasienPanel pasienPanel = new PasienPanel(MainFrame.this);
-        Menu pasienMenu = new Menu("pasien", SidebarPasien, pasienPanel);
-        PasienCheckup pasienCheck = new PasienCheckup(MainFrame.this, pasienPanel);
-        Menu pasienCheckup = new Menu("pasienCheckup", null, pasienCheck);
-        ArrayList<Menu> pasienChildren = new ArrayList();
-        pasienChildren.add(pasienCheckup);
-        pasienMenu.setChildren(pasienChildren);
-        menus.add(pasienMenu);
-        
-        menus.add(new Menu("hasilPemeriksaan", SidebarHasilPemeriksaan, new PemeriksaanPanel()));
-        menus.add(new Menu("obat", SidebarObat, new ObatPanel()));
-        menus.add(new Menu("kamar", SidebarKamar, new KamarPanel()));
-        menus.add(new Menu("antrian", SidebarAntrian, new AntrianPanel()));
-        menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel()));
-        menus.add(new Menu("resepsionis", SidebarResepsionis, new ResepsionisPanel()));
-        menus.add(new Menu("apoteker", SidebarApoteker, new ApotekerPanel()));
-        menus.add(new Menu("pimpinan", SidebarPimpinan, new PimpinanPanel()));
         // first load
         JPanel dashboardPanel = new HomePanel();
         dashboardPanel.setVisible(true);
@@ -63,6 +63,10 @@ public class MainFrame extends javax.swing.JFrame {
         Body.setLayout(cl);
         Body.add(dashboardPanel);
         SidebarHome.setBackground(MENU_IN);
+    }
+
+    public MainFrame(MainProgram aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /**
@@ -91,9 +95,15 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarApoteker = new javax.swing.JPanel();
         SidebarApotekerlcon = new javax.swing.JLabel();
         SidebarApotekerTitle = new javax.swing.JLabel();
+        SidebarAdmin = new javax.swing.JPanel();
+        SidebarAdminIcon = new javax.swing.JLabel();
+        SidebarAdminTitle = new javax.swing.JLabel();
         SidebarPimpinan = new javax.swing.JPanel();
         SidebarPimpinanIcon = new javax.swing.JLabel();
         SidebarPimpinanTitle = new javax.swing.JLabel();
+        SidebarLaboratorium = new javax.swing.JPanel();
+        SidebarLaboratoriumIcon = new javax.swing.JLabel();
+        SidebarLaboratoriumTitle = new javax.swing.JLabel();
         SidebarPasien = new javax.swing.JPanel();
         SidebarPasienIcon = new javax.swing.JLabel();
         SidebarPasienTitle = new javax.swing.JLabel();
@@ -320,6 +330,42 @@ public class MainFrame extends javax.swing.JFrame {
 
         Sidebar.add(SidebarApoteker);
 
+        SidebarAdmin.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarAdmin.setName("SidebarAdmin"); // NOI18N
+        SidebarAdmin.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarAdmin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarAdminMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarAdminMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarAdminMouseEntered(evt);
+            }
+        });
+        SidebarAdmin.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarAdminIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarAdminIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarAdminIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarAdminIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarAdminIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarAdmin.add(SidebarAdminIcon);
+        ImageIcon imageIconAdmin = new javax.swing.ImageIcon(getClass().getResource("/assets/user.png")); // load the image to a imageIcon
+        Image imageAdmin = imageIconAdmin.getImage(); // transform it
+        Image newimgAdmin = imageAdmin.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconAdmin = new ImageIcon(newimgAdmin);  // transform it back
+        SidebarAdminIcon.setIcon(imageIconAdmin);
+
+        SidebarAdminTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarAdminTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarAdminTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarAdminTitle.setText("Admin");
+        SidebarAdmin.add(SidebarAdminTitle);
+
+        Sidebar.add(SidebarAdmin);
+
         SidebarPimpinan.setBackground(new java.awt.Color(52, 73, 94));
         SidebarPimpinan.setName("SidebarPimpinan"); // NOI18N
         SidebarPimpinan.setPreferredSize(new java.awt.Dimension(160, 40));
@@ -355,6 +401,42 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarPimpinan.add(SidebarPimpinanTitle);
 
         Sidebar.add(SidebarPimpinan);
+
+        SidebarLaboratorium.setBackground(new java.awt.Color(52, 73, 94));
+        SidebarLaboratorium.setName("SidebarLaboratorium"); // NOI18N
+        SidebarLaboratorium.setPreferredSize(new java.awt.Dimension(160, 40));
+        SidebarLaboratorium.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SidebarLaboratoriumMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                SidebarLaboratoriumMouseExited(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                SidebarLaboratoriumMouseEntered(evt);
+            }
+        });
+        SidebarLaboratorium.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 8));
+
+        SidebarLaboratoriumIcon.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
+        SidebarLaboratoriumIcon.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarLaboratoriumIcon.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        SidebarLaboratoriumIcon.setPreferredSize(new java.awt.Dimension(22, 22));
+        SidebarLaboratoriumIcon.setSize(new java.awt.Dimension(32, 32));
+        SidebarLaboratorium.add(SidebarLaboratoriumIcon);
+        ImageIcon imageIconLab = new javax.swing.ImageIcon(getClass().getResource("/assets/pimpinan.png")); // load the image to a imageIcon
+        Image imageLab = imageIconLab.getImage(); // transform it
+        Image newimgLab = imageLab.getScaledInstance(22, 22,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIconLab = new ImageIcon(newimgLab);  // transform it back
+        SidebarLaboratoriumIcon.setIcon(imageIconLab);
+
+        SidebarLaboratoriumTitle.setBackground(new java.awt.Color(255, 255, 255));
+        SidebarLaboratoriumTitle.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        SidebarLaboratoriumTitle.setForeground(new java.awt.Color(255, 255, 255));
+        SidebarLaboratoriumTitle.setText("Laboratorium");
+        SidebarLaboratorium.add(SidebarLaboratoriumTitle);
+
+        Sidebar.add(SidebarLaboratorium);
 
         SidebarPasien.setBackground(new java.awt.Color(52, 73, 94));
         SidebarPasien.setName("SidebarPasien"); // NOI18N
@@ -463,6 +545,7 @@ public class MainFrame extends javax.swing.JFrame {
         SidebarKamar.add(SidebarKamarTitle);
 
         Sidebar.add(SidebarKamar);
+        SidebarKamar.setVisible(false);
 
         SidebarAntrian.setBackground(new java.awt.Color(52, 73, 94));
         SidebarAntrian.setName("SidebarAntrian"); // NOI18N
@@ -825,6 +908,59 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
+        menus.add(new Menu("home", SidebarHome, new HomePanel()));
+
+        Menu doctorMenu = new Menu("dokter", SidebarDokter, new DokterPanel(bcrypt, doctorService, this, specializeDoctorService));
+        SpecializeDoctorPanel specializeDoctorPanel = new SpecializeDoctorPanel(this, specializeDoctorService);
+        Menu specializePanel = new Menu("specializeDoctor", null, specializeDoctorPanel);
+        ArrayList<Menu> doctorChildren = new ArrayList();
+        doctorChildren.add(specializePanel);
+        doctorMenu.setChildren(doctorChildren);
+        menus.add(doctorMenu);
+        
+        PasienPanel pasienPanel = new PasienPanel(this, patientService);
+        Menu pasienMenu = new Menu("pasien", SidebarPasien, pasienPanel);
+        PasienCheckupDoctorPanel pasienCheck = new PasienCheckupDoctorPanel(this, pasienPanel, patientCheckupService, doctorService, patientService);
+        Menu pasienCheckup = new Menu("pasienCheckup", null, pasienCheck);
+        ArrayList<Menu> pasienChildren = new ArrayList();
+        pasienChildren.add(pasienCheckup);
+        pasienMenu.setChildren(pasienChildren);
+        menus.add(pasienMenu);
+        
+        PemeriksaanPanel pemeriksaanPanel = new PemeriksaanPanel(
+                            this,
+                            patientCheckupService,
+                            patientService,
+                            doctorService,
+                            medicineService,
+                            patientCheckupMedicineService
+                        );
+        Menu pemeriksaanMenu = new Menu(
+                        "hasilPemeriksaan", 
+                        SidebarHasilPemeriksaan, 
+                        pemeriksaanPanel);
+        ArrayList<Menu> pemeriksaanChildren = new ArrayList();
+        pemeriksaanChildren.add(new Menu("pemeriksaanDetail", null, new PasienCheckupDetailPanel(this, pemeriksaanPanel, authentication)));
+        pemeriksaanMenu.setChildren(pemeriksaanChildren);
+        menus.add(pemeriksaanMenu);
+        
+        menus.add(new Menu("obat", SidebarObat, new ObatPanel()));
+        menus.add(new Menu("kamar", SidebarKamar, new KamarPanel()));
+        menus.add(new Menu("antrian", SidebarAntrian, new AntrianPanel()));
+        menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel()));
+        menus.add(new Menu("resepsionis", SidebarResepsionis, new ResepsionisPanel()));
+        menus.add(new Menu("apoteker", SidebarApoteker, new ApotekerPanel()));
+        menus.add(new Menu("pimpinan", SidebarPimpinan, new PimpinanPanel()));
+        menus.add(new Menu("admin", SidebarAdmin, new AdminPanel()));
+        
+        Menu labMenu = new Menu("laboratorium", SidebarLaboratorium, new LaboratoriumPanel(this));
+        LabBagianPanel bagianPanel = new LabBagianPanel(this, labDivsionService);
+        ArrayList<Menu> labChildren = new ArrayList();
+        labChildren.add(new Menu("labDivision", null, bagianPanel));
+        labMenu.setChildren(labChildren);
+        menus.add(labMenu);
+        
+        
         HeaderUser.setText(authentication.getName());
     }//GEN-LAST:event_formWindowOpened
 
@@ -832,7 +968,7 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         int confirm = JOptionPane.showOptionDialog(
                 this,
-                "Anda Yakin?",
+                "Anda Yakin keluar?",
                 "Logout",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE, 
@@ -842,6 +978,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         if (confirm == JOptionPane.YES_OPTION) {
             dispose();
+            System.exit(0);
         }
     }//GEN-LAST:event_SidebarLogoutMouseClicked
 
@@ -854,6 +991,36 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         mouseInMenu(SidebarLogout);
     }//GEN-LAST:event_SidebarLogoutMouseEntered
+
+    private void SidebarAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAdminMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarAdmin);
+    }//GEN-LAST:event_SidebarAdminMouseClicked
+
+    private void SidebarAdminMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAdminMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarAdmin);
+    }//GEN-LAST:event_SidebarAdminMouseExited
+
+    private void SidebarAdminMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarAdminMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarAdmin);
+    }//GEN-LAST:event_SidebarAdminMouseEntered
+
+    private void SidebarLaboratoriumMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLaboratoriumMouseClicked
+        // TODO add your handling code here:
+        openMenu(SidebarLaboratorium);
+    }//GEN-LAST:event_SidebarLaboratoriumMouseClicked
+
+    private void SidebarLaboratoriumMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLaboratoriumMouseExited
+        // TODO add your handling code here:
+        mouseOutMenu(SidebarLaboratorium);
+    }//GEN-LAST:event_SidebarLaboratoriumMouseExited
+
+    private void SidebarLaboratoriumMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SidebarLaboratoriumMouseEntered
+        // TODO add your handling code here:
+        mouseInMenu(SidebarLaboratorium);
+    }//GEN-LAST:event_SidebarLaboratoriumMouseEntered
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -865,6 +1032,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel HeaderUser;
     private javax.swing.JPanel Main;
     private javax.swing.JPanel Sidebar;
+    private javax.swing.JPanel SidebarAdmin;
+    private javax.swing.JLabel SidebarAdminIcon;
+    private javax.swing.JLabel SidebarAdminTitle;
     private javax.swing.JPanel SidebarAntrian;
     private javax.swing.JLabel SidebarAntrianIcon;
     private javax.swing.JLabel SidebarAntrianTitle;
@@ -883,6 +1053,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel SidebarKamar;
     private javax.swing.JLabel SidebarKamarIcon;
     private javax.swing.JLabel SidebarKamarTitle;
+    private javax.swing.JPanel SidebarLaboratorium;
+    private javax.swing.JLabel SidebarLaboratoriumIcon;
+    private javax.swing.JLabel SidebarLaboratoriumTitle;
     private javax.swing.JPanel SidebarLaporan;
     private javax.swing.JLabel SidebarLaporanIcon;
     private javax.swing.JLabel SidebarLaporanTitle;

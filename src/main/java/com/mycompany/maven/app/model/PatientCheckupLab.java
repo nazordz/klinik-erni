@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,30 +27,30 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author mac
  */
 @Entity
-@Table(name = "patient_checkup_medicines")
+@Table(name = "patient_checkup_labs")
 @Data
-public class PatientCheckupMedicine implements Serializable {
+public class PatientCheckupLab implements Serializable{
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
     @GeneratedValue(generator = "UUID4")
     private String id;
     
-    @Column(name = "medicine_id")
-    private String medicineId;
-    
     @Column(name = "patient_checkup_id")
     private String patientCheckupId;
     
-    @Column(nullable = false)
-    private Integer quantity;
+    @Column(name = "result_lab_checkup")
+    private String resultLabCheckup;
     
-    @ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER ,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "medicine_id", insertable = false, updatable = false)
-    private Medicine medicine;
-    
-    @ManyToOne(targetEntity = PatientCheckup.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = PatientCheckup.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_checkup_id", insertable = false, updatable = false)
     private PatientCheckup patientCheckup;
+    
+    @Column(name = "laboratorium_id")
+    private String laboratoriumId;
+    
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Laboratorium.class)
+    @JoinColumn(name = "laboratorium_id", insertable = false, updatable = false)
+    private Laboratorium laboratorium;
     
     @Column(name = "created_at")
     @CreationTimestamp

@@ -5,7 +5,8 @@
  */
 package com.mycompany.maven.app.service;
 
-import com.mycompany.maven.app.model.Receptionist;
+import com.mycompany.maven.app.model.Laboratorium;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.NoResultException;
 import org.hibernate.HibernateException;
@@ -18,14 +19,14 @@ import org.hibernate.query.Query;
  *
  * @author mac
  */
-public class ReceptionistServiceImpl implements ICrudService<Receptionist>, IFindByEmailService<Receptionist> {
-private static SessionFactory factory; 
+public class LaboratoriumServiceImpl implements ICrudService<Laboratorium>, IFindByEmailService<Laboratorium> {
+    private static SessionFactory factory; 
 
-    public ReceptionistServiceImpl() {
+    public LaboratoriumServiceImpl() {
         this.factory = new Configuration().configure().buildSessionFactory();
     }
     @Override
-    public boolean insert(Receptionist data) {
+    public boolean insert(Laboratorium data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
@@ -42,19 +43,20 @@ private static SessionFactory factory;
     }
 
     @Override
-    public boolean update(Receptionist data) {
+    public boolean update(Laboratorium data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, data.getId());
-            recep.setName(data.getName());
-            recep.setEmail(data.getEmail());
-            recep.setPhone(data.getPhone());
-            recep.setAddress(data.getAddress());
+            Laboratorium labData = session.find(Laboratorium.class, data.getId());
+            labData.setName(data.getName());
+            labData.setEmail(data.getEmail());
+            labData.setPhone(data.getPhone());
+            labData.setAddress(data.getAddress());
+            labData.setDivisionId(data.getDivisionId());
             if (data.getPassword() != null) {
-                recep.setPassword(data.getPassword());
+                labData.setPassword(data.getPassword());
             }
-            session.save(recep);
+            session.save(labData);
             tx.commit();
             return true;
         } catch (HibernateException e) {
@@ -71,8 +73,8 @@ private static SessionFactory factory;
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, id);
-            session.delete(recep);
+            Laboratorium labData = session.find(Laboratorium.class, id);
+            session.delete(labData);
             tx.commit();
         } catch (HibernateException e) {
             System.err.println(e.getMessage());
@@ -85,13 +87,13 @@ private static SessionFactory factory;
     }
 
     @Override
-    public Receptionist findById(String id) {
+    public Laboratorium findById(String id) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Receptionist recep = session.find(Receptionist.class, id);
+            Laboratorium labData = session.find(Laboratorium.class, id);
             tx.commit();
-            return recep;
+            return labData;
         } catch (Exception e) {
             e.printStackTrace();
             tx.rollback();
@@ -102,32 +104,33 @@ private static SessionFactory factory;
     }
 
     @Override
-    public List<Receptionist> findAll() {
+    public List<Laboratorium> findAll() {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
+        List<Laboratorium> EmptyList = Collections.<Laboratorium>emptyList();  
         try {
-            List<Receptionist> receps = session.createQuery("FROM Receptionist", Receptionist.class).list();
+            List<Laboratorium> labs = session.createQuery("FROM Laboratorium", Laboratorium.class).list();
             tx.commit();
-            return receps;
+            return labs;
         } catch (Exception e) {
             e.printStackTrace();
             tx.rollback();
         } finally {
             session.close();
         }
-        return null;
+        return EmptyList;
     }
 
     @Override
-    public Receptionist findByEmail(String email) {
+    public Laboratorium findByEmail(String email) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Query query = session.createQuery("FROM Receptionist WHERE email = :email");
+            Query query = session.createQuery("FROM Laboratorium WHERE email = :email");
             query.setParameter("email", email);
-            Receptionist recep = (Receptionist) query.getSingleResult();
+            Laboratorium lead = (Laboratorium) query.getSingleResult();
             tx.commit();
-            return recep;
+            return lead;
         } catch (NoResultException e) {
         } finally {
             session.close();

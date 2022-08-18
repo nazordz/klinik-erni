@@ -18,6 +18,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -56,9 +58,13 @@ public class Doctor implements java.io.Serializable {
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date BirthDate;
     
-    @Column
-    @Enumerated(EnumType.STRING)
-    private SpecializationType Specialization;
+    
+    @Column(name = "specialize_doctor_id")
+    private String specializeDoctorId;
+    
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = SpecializeDoctor.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "specialize_doctor_id", insertable = false, updatable = false)
+    private SpecializeDoctor specialize;
     
     @Enumerated(EnumType.STRING)
     @Column
@@ -79,5 +85,5 @@ public class Doctor implements java.io.Serializable {
     private Timestamp updatedAt;
     
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "doctor")
-    private List<PatientCheckup> patientCheckups; 
+    private List<PatientCheckupDoctor> patientCheckupDoctors; 
 }

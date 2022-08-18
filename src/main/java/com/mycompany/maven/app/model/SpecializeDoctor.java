@@ -7,14 +7,13 @@ package com.mycompany.maven.app.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,31 +24,23 @@ import org.hibernate.annotations.UpdateTimestamp;
  *
  * @author mac
  */
+@Table(name = "specialize_doctors")
 @Entity
-@Table(name = "patient_checkup_medicines")
 @Data
-public class PatientCheckupMedicine implements Serializable {
+public class SpecializeDoctor implements Serializable{
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
     @GeneratedValue(generator = "UUID4")
     private String id;
     
-    @Column(name = "medicine_id")
-    private String medicineId;
+    @Column
+    private String name;
     
-    @Column(name = "patient_checkup_id")
-    private String patientCheckupId;
+    @Column(name = "checkup_fee", precision = 15, scale = 2)
+    private double checkupFee;
     
-    @Column(nullable = false)
-    private Integer quantity;
-    
-    @ManyToOne(targetEntity = Medicine.class, fetch = FetchType.EAGER ,cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "medicine_id", insertable = false, updatable = false)
-    private Medicine medicine;
-    
-    @ManyToOne(targetEntity = PatientCheckup.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "patient_checkup_id", insertable = false, updatable = false)
-    private PatientCheckup patientCheckup;
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = PatientCheckup.class, mappedBy = "specializeDoctor")
+    private List<PatientCheckup> checkups;
     
     @Column(name = "created_at")
     @CreationTimestamp

@@ -64,7 +64,7 @@ public class ApotekerPanel extends javax.swing.JPanel {
         pharma.setPhone(PhoneInput.getText());
         pharma.setAddress(AddressInput.getText());
         if (PasswordCheck.isSelected()) {
-            pharma.setPassword(bcrypt.hash(PasswordInput.getPassword().toString()));
+            pharma.setPassword(bcrypt.hash(new String(PasswordInput.getPassword())));
         }
         if (selectedId != null) {
             pharma.setId(selectedId);

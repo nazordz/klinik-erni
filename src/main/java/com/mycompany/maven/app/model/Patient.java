@@ -14,6 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import org.hibernate.annotations.SQLDelete;
 
 /**
  * @author mac
@@ -21,15 +22,16 @@ import java.util.Date;
 @Entity
 @Table(name = "patients")
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@SQLDelete(sql = "UPDATE products SET is_deleted = true WHERE id = ?")
 @Data
 public class Patient {
     @Id
     @GenericGenerator(name = "UUID4", strategy = "org.hibernate.id.UUIDGenerator")
     @GeneratedValue(generator = "UUID4")
     private String id;
-
-    @Column(name = "patient_number")
-    private String patientNumber;
+    
+    @Column(name = "patient_number", unique = true, nullable = false, length = 8)
+    private Integer patientNumber;
 
     @Column
     private String name;
@@ -54,17 +56,6 @@ public class Patient {
     @CreationTimestamp
     private Timestamp updatedAt;
 
-    public Patient() {}
-    public Patient(String patientNumber, String name, Date birthDate, String bloodType, String gender, String address) {
-        this.patientNumber = patientNumber;
-        this.name = name;
-        this.birthDate = birthDate;
-        this.bloodType = bloodType;
-        this.gender = gender;
-        this.address = address;
-    }
-    
-    
-    
-    
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 }

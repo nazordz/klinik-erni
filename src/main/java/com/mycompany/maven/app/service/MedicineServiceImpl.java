@@ -43,9 +43,8 @@ public class MedicineServiceImpl implements ICrudService<Medicine>{
     @Override
     public boolean update(Medicine data) {
         Session session = factory.openSession();
-
+        Transaction tx = session.beginTransaction();
         try {
-            Transaction tx = session.beginTransaction();
             Medicine medicine = session.find(Medicine.class, data.getId());
             medicine.setName(data.getName());
             medicine.setPrice(data.getPrice());
@@ -56,6 +55,7 @@ public class MedicineServiceImpl implements ICrudService<Medicine>{
             tx.commit();
         } catch (HibernateException e) {
             System.err.println("Gagal");
+            tx.rollback();
             e.printStackTrace();
             return false;
         } finally {

@@ -8,6 +8,7 @@ package com.mycompany.maven.app.service;
 import com.mycompany.maven.app.model.Pharmacist;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.NoResultException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -107,8 +108,6 @@ private static final SessionFactory factory = new Configuration().configure().bu
             tx.commit();
             return receps;
         } catch (Exception e) {
-            e.printStackTrace();
-            tx.rollback();
         } finally {
             session.close();
         }
@@ -122,13 +121,10 @@ private static final SessionFactory factory = new Configuration().configure().bu
         try {
             Query query = session.createQuery("FROM Pharmacist WHERE email = :email");
             query.setParameter("email", email);
-            Optional<Pharmacist> pharmacist = (Optional<Pharmacist>) query.getSingleResult();
+            Pharmacist pharmacist = (Pharmacist) query.getSingleResult();
             tx.commit();
-            return pharmacist.orElse(null);
-        } catch (javax.persistence.NoResultException e)  {}
-        catch (HibernateException e) {
-            e.printStackTrace();
-            tx.rollback();
+            return pharmacist;
+        }catch (NoResultException e) {
         } finally {
             session.close();
         }

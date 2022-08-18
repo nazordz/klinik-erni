@@ -9,11 +9,10 @@ package com.mycompany.maven.app.enumeration;
  *
  * @author mac
  */
-public enum Role {
-    ROLE_LEADER,
-    ROLE_RECEPCIONIST,
-    ROLE_DOCTOR,
-    ROLE_PHARMACIST,
-    ROLE_ADMIN,
-    ROLE_LAB
+public enum CheckupStatus {
+    OPEN,
+    DOCTOR_CHECK,
+    LAB_CHECK,
+    GET_MEDICINE,
+    CLOSED
 }

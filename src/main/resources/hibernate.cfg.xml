@@ -61,8 +61,15 @@ Contributor(s):
     <mapping class="com.mycompany.maven.app.model.Patient"/>
     <mapping class="com.mycompany.maven.app.model.Medicine"/>
     <mapping class="com.mycompany.maven.app.model.PatientCheckupMedicine"/>
+    <mapping class="com.mycompany.maven.app.model.PatientCheckupDoctor"/>
+    <mapping class="com.mycompany.maven.app.model.PatientCheckupLab"/>
     <mapping class="com.mycompany.maven.app.model.Receptionist"/>
     <mapping class="com.mycompany.maven.app.model.Pharmacist"/>
     <mapping class="com.mycompany.maven.app.model.Leader"/>
+    <mapping class="com.mycompany.maven.app.model.Admin"/>
+    <mapping class="com.mycompany.maven.app.model.SpecializeDoctor"/>
+    <mapping class="com.mycompany.maven.app.model.Laboratorium"/>
+    <mapping class="com.mycompany.maven.app.model.LaboratoriumDivision"/>
+
   </session-factory>
 </hibernate-configuration>

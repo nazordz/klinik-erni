@@ -10,7 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import com.mycompany.maven.app.model.PatientCheckupMedicine;
+import com.mycompany.maven.app.model.PatientCheckupLab;
 import java.util.List;
 import org.hibernate.HibernateException;
 
@@ -18,9 +18,9 @@ import org.hibernate.HibernateException;
  *
  * @author mac
  */
-public class PatientCheckupMedicineService implements ICrudService<PatientCheckupMedicine>{
+public class CheckupLabServiceImpl implements ICrudService<PatientCheckupLab>{
     private static SessionFactory factory; 
-    public PatientCheckupMedicineService() {
+    public CheckupLabServiceImpl() {
         this.factory = new Configuration().configure().buildSessionFactory();
     }
     
@@ -28,7 +28,7 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            Query query = session.createQuery("DELETE FROM PatientCheckupMedicine WHERE patient_checkup_id = :checkup_id");
+            Query query = session.createQuery("DELETE FROM PatientCheckupLab WHERE patient_checkup_id = :checkup_id");
             query.setParameter("checkup_id", checkupId);
             query.executeUpdate();
             tx.commit();
@@ -40,27 +40,9 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
         }
         
     }
-    
-    public List<PatientCheckupMedicine> findByPatientCheckupId(String checkupId) {
-        Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
-        try {
-            Query query = session.createQuery("FROM PatientCheckupMedicine WHERE patient_checkup_id = :checkup_id");
-            query.setParameter("checkup_id", checkupId);
-            List<PatientCheckupMedicine> checkups = query.list();
-            tx.commit();
-            return checkups;
-        } catch (Exception e) {
-            tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-        return null;
-    }
 
     @Override
-    public boolean insert(PatientCheckupMedicine data) {
+    public boolean insert(PatientCheckupLab data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
@@ -77,15 +59,15 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
     }
 
     @Override
-    public boolean update(PatientCheckupMedicine data) {
+    public boolean update(PatientCheckupLab data) {
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            PatientCheckupMedicine checkup = session.find(PatientCheckupMedicine.class, data.getId());
-            checkup.setMedicineId(data.getMedicineId());
-            checkup.setPatientCheckupId(data.getPatientCheckupId());
-            checkup.setQuantity(data.getQuantity());
-            session.save(checkup);
+            PatientCheckupLab checkupLab = session.find(PatientCheckupLab.class, data.getId());
+            checkupLab.setLaboratoriumId(data.getLaboratoriumId());
+            checkupLab.setPatientCheckupId(data.getPatientCheckupId());
+            checkupLab.setResultLabCheckup(data.getResultLabCheckup());
+            session.save(checkupLab);
             tx.commit();
             return true;
         } catch (Exception e) {
@@ -102,7 +84,7 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
         Session session = factory.openSession();
         Transaction tx = session.beginTransaction();
         try {
-            PatientCheckupMedicine checkup = session.find(PatientCheckupMedicine.class, id);
+            PatientCheckupLab checkup = session.find(PatientCheckupLab.class, id);
             session.delete(checkup);
             tx.commit();
             return true;
@@ -117,16 +99,17 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
     }
 
     @Override
-    public PatientCheckupMedicine findById(String id) {
+    public PatientCheckupLab findById(String id) {
         Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
+        Transaction tx = null;
         try {
-            PatientCheckupMedicine checkup = session.find(PatientCheckupMedicine.class, id);
+            tx = session.beginTransaction();
+            PatientCheckupLab checkup = session.find(PatientCheckupLab.class, id);
             tx.commit();
             return checkup;
         } catch(NullPointerException e) {}
         catch (HibernateException e) {
-            tx.rollback();
+            if (tx!=null) tx.rollback();
             e.printStackTrace(); 
         } finally {
             session.close();
@@ -135,16 +118,17 @@ public class PatientCheckupMedicineService implements ICrudService<PatientChecku
     }
 
     @Override
-    public List<PatientCheckupMedicine> findAll() {
+    public List<PatientCheckupLab> findAll() {
         Session session = factory.openSession();
-        Transaction tx = session.beginTransaction();
+        Transaction tx = null;
         try {
-            List<PatientCheckupMedicine> checkups = session.createQuery("FROM PatientCheckupMedicine").list();
+            tx = session.beginTransaction();
+            List<PatientCheckupLab> checkups = session.createQuery("FROM PatientCheckupLab", PatientCheckupLab.class).list();
             tx.commit();
             return checkups;
         } catch(NullPointerException e) {}
         catch (HibernateException e) {
-            tx.rollback();
+            if (tx!=null) tx.rollback();
             e.printStackTrace(); 
         } finally {
             session.close();

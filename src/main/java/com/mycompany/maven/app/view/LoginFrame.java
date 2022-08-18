@@ -11,7 +11,11 @@ import com.mycompany.maven.app.model.Doctor;
 import com.mycompany.maven.app.model.Leader;
 import com.mycompany.maven.app.model.Pharmacist;
 import com.mycompany.maven.app.model.Receptionist;
+import com.mycompany.maven.app.model.Admin;
+import com.mycompany.maven.app.model.Laboratorium;
+import com.mycompany.maven.app.service.AdminServiceImpl;
 import com.mycompany.maven.app.service.DoctorServiceImpl;
+import com.mycompany.maven.app.service.LaboratoriumServiceImpl;
 import com.mycompany.maven.app.service.LeaderServiceImpl;
 import com.mycompany.maven.app.service.PharmacistServiceImpl;
 import com.mycompany.maven.app.service.ReceptionistServiceImpl;
@@ -24,27 +28,47 @@ import javax.swing.JOptionPane;
  * @author mac
  */
 public class LoginFrame extends javax.swing.JFrame {
-    private final MainFrame mainFrame;
     private static final UpdatableBCrypt bcrypt = new UpdatableBCrypt(12);
     private static final LeaderServiceImpl leaderService = new LeaderServiceImpl();
     private static final ReceptionistServiceImpl recepcionistService = new ReceptionistServiceImpl();
     private static final DoctorServiceImpl doctorService = new DoctorServiceImpl();
     private static final PharmacistServiceImpl pharmacistService = new PharmacistServiceImpl();
+    private static final AdminServiceImpl adminService = new AdminServiceImpl();
+    private static final LaboratoriumServiceImpl labService = new LaboratoriumServiceImpl();
+    private static Authentication authentication;
+    private static MainFrame mainFrame;
     /**
      * Creates new form LoginFrame 
 
      */
-    public LoginFrame(MainFrame mainFrame) {
+    public LoginFrame(Authentication authentication, MainFrame mainFrame) {
         initComponents();
+        this.authentication = authentication;
         this.mainFrame = mainFrame;
     }
     
     public Authentication signIn(String email, String password) {
+        // Login admin
+        Admin admin = adminService.findByEmail(email);
+        if (admin != null) {
+            if (bcrypt.verifyHash(password, admin.getPassword())) {
+                return new Authentication(
+                        admin.getId(),
+                        admin.getName(),
+                        admin.getEmail(),
+                        admin.getPhone(),
+                        Role.ROLE_ADMIN,
+                        Arrays.asList("REPORT")
+                );
+            } 
+        }
+        
         //check leader
         Leader user = leaderService.findByEmail(email);
         if (user != null) {  
             if (bcrypt.verifyHash(password, user.getPassword())) {
                 return new Authentication(
+                        user.getId(),
                         user.getName(),
                         user.getEmail(),
                         user.getPhone(),
@@ -59,6 +83,7 @@ public class LoginFrame extends javax.swing.JFrame {
         if (receptionist != null) {
             if (bcrypt.verifyHash(password, receptionist.getPassword())) {
                 return new Authentication(
+                        receptionist.getId(),
                         receptionist.getName(),
                         receptionist.getEmail(),
                         receptionist.getPhone(),
@@ -73,6 +98,7 @@ public class LoginFrame extends javax.swing.JFrame {
         if (doctor != null) {
             if (bcrypt.verifyHash(password, doctor.getPassword())) {
                 return new Authentication(
+                        doctor.getId(),
                         doctor.getName(),
                         doctor.getEmail(),
                         doctor.getPhone(),
@@ -82,10 +108,12 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         }
         
+        // pharmacist
         Pharmacist pharmacist = pharmacistService.findByEmail(email);
         if (pharmacist != null) {
             if (bcrypt.verifyHash(password, pharmacist.getPassword())) {
                 return new Authentication(
+                        pharmacist.getId(),
                         pharmacist.getName(),
                         pharmacist.getEmail(),
                         pharmacist.getPhone(),
@@ -95,6 +123,20 @@ public class LoginFrame extends javax.swing.JFrame {
             }
         }
         
+        // lab
+        Laboratorium lab = labService.findByEmail(email);
+        if (lab != null) {
+            if (bcrypt.verifyHash(password, lab.getPassword())) {
+                return new Authentication(
+                        lab.getId(),
+                        lab.getName(),
+                        lab.getEmail(),
+                        lab.getPhone(),
+                        Role.ROLE_LAB,
+                        Arrays.asList("LABORATORIUM")
+                );
+            }
+        }
         return null;
     }
     /**
@@ -209,7 +251,17 @@ public class LoginFrame extends javax.swing.JFrame {
         
         Authentication attempt = signIn(EmailInput.getText(), new String(PasswordInput.getPassword()));
         if (attempt != null) {
-            mainFrame.setAuthentication(attempt);
+//            mainFrame.setAuthentication(attempt);
+            authentication.setId(attempt.getId());
+            authentication.setName(attempt.getName());
+            authentication.setEmail(attempt.getEmail());
+            authentication.setPhone(attempt.getPhone());
+            authentication.setRole(attempt.getRole());
+            authentication.setAuthorization(attempt.getAuthorization());
+            System.out.println("LoginAuth:");
+            System.out.println(authentication);
+            
+            mainFrame.setAuthentication(authentication);
             this.setVisible(false);
             mainFrame.setVisible(true);
         } else {

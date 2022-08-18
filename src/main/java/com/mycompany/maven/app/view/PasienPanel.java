@@ -22,16 +22,16 @@ import com.mycompany.maven.app.util.DateCellRenderer;
  */
 public class PasienPanel extends javax.swing.JPanel {
     
-    private PatientServiceImpl patientService;
+    private final PatientServiceImpl patientService;
     private String editedId = "";
-    private MainFrame MainFrame;
+    private final MainFrame MainFrame;
     /**
      * Creates new form PasienPanel
      */
-    public PasienPanel(MainFrame frame) {
+    public PasienPanel(MainFrame frame, PatientServiceImpl patientService) {
         initComponents();
         this.MainFrame = frame;
-        this.patientService = new PatientServiceImpl();
+        this.patientService = patientService;
         getDataTable();
     }
 
@@ -47,8 +47,6 @@ public class PasienPanel extends javax.swing.JPanel {
         Form = new javax.swing.JPanel();
         InputGroup = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        NoPatientField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         NameField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -79,14 +77,6 @@ public class PasienPanel extends javax.swing.JPanel {
         Form.setLayout(new java.awt.BorderLayout());
 
         InputGroup.setPreferredSize(new java.awt.Dimension(331, 190));
-
-        jLabel1.setText("No. Pasien");
-
-        NoPatientField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NoPatientFieldActionPerformed(evt);
-            }
-        });
 
         jLabel2.setText("Nama");
 
@@ -131,17 +121,15 @@ public class PasienPanel extends javax.swing.JPanel {
                         .addGap(321, 321, 321)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(InputGroupLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
+                        .addGap(26, 26, 26)
                         .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
+                        .addGap(32, 32, 32)
                         .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(NoPatientField)
                             .addComponent(NameField)
-                            .addComponent(DateBirthField, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
-                        .addGap(54, 54, 54)
+                            .addComponent(DateBirthField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(52, 52, 52)
                         .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(InputGroupLayout.createSequentialGroup()
                                 .addComponent(jLabel4)
@@ -163,28 +151,32 @@ public class PasienPanel extends javax.swing.JPanel {
             InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(InputGroupLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(NoPatientField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(BloodTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(ManRadio)
-                    .addComponent(WomenRadio)
-                    .addComponent(jLabel5))
+                .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(InputGroupLayout.createSequentialGroup()
+                        .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(DateBirthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(1, 1, 1))
+                    .addGroup(InputGroupLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BloodTypeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ManRadio)
+                            .addComponent(WomenRadio)
+                            .addComponent(jLabel5))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(DateBirthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
                     .addComponent(jLabel6)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         Form.add(InputGroup, java.awt.BorderLayout.PAGE_START);
@@ -351,7 +343,6 @@ public class PasienPanel extends javax.swing.JPanel {
     
     private void AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddActionPerformed
         // TODO add your handling code here:
-        String patientNumber = NoPatientField.getText();
         String name = NameField.getText();
         Date birthDate = DateBirthField.getDate();
         String bloodType = BloodTypeField.getSelectedItem().toString();
@@ -360,7 +351,12 @@ public class PasienPanel extends javax.swing.JPanel {
             gender = "Pria";
         }
         String address = AddressField.getText();
-        Patient patient = new Patient(patientNumber, name, birthDate, bloodType, gender, address);
+        Patient patient = new Patient();
+        patient.setName(name);
+        patient.setBirthDate(birthDate);
+        patient.setBloodType(bloodType);
+        patient.setGender(gender);
+        patient.setAddress(address);
         if (!editedId.isEmpty()) {
             patient.setId(editedId);
             this.patientService.update(patient);
@@ -405,7 +401,6 @@ public class PasienPanel extends javax.swing.JPanel {
         this.Remove.setVisible(false);
         this.Checkup.setVisible(false);
         this.editedId = "";
-        this.NoPatientField.setText("");
         this.NameField.setText("");
         this.DateBirthField.setCalendar(null);
         this.BloodTypeField.setSelectedItem("A");
@@ -421,7 +416,6 @@ public class PasienPanel extends javax.swing.JPanel {
     private void TablePasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TablePasienMouseClicked
         // TODO add your handling code here:
         this.editedId = TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 0).toString();
-        this.NoPatientField.setText(TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 1).toString());
         this.NameField.setText(TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 2).toString());
         this.DateBirthField.setCalendar(toCalendar((Date) TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 3)));
         this.BloodTypeField.setSelectedItem(TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 4));
@@ -436,10 +430,6 @@ public class PasienPanel extends javax.swing.JPanel {
         this.Remove.setVisible(true);
         this.Checkup.setVisible(true);
     }//GEN-LAST:event_TablePasienMouseClicked
-
-    private void NoPatientFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NoPatientFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_NoPatientFieldActionPerformed
 
     private void NameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NameFieldActionPerformed
         // TODO add your handling code here:
@@ -462,28 +452,20 @@ public class PasienPanel extends javax.swing.JPanel {
     public void updateTable(int row, int column) {
         DefaultTableModel tm = (DefaultTableModel) TablePasien.getModel();
         String id = (String) tm.getValueAt(row, 0);  
-        String patientNumber = (String) tm.getValueAt(row, 1);
-        String name = (String) tm.getValueAt(row, 2);
-        Date birthDate = (Date) tm.getValueAt(row, 3);
+        String name = (String) tm.getValueAt(row, 1);
+        Date birthDate = (Date) tm.getValueAt(row, 2);
         
-        System.out.println(tm.getValueAt(row, 3).getClass().getSimpleName() + ": " + tm.getValueAt(row, 3));
         
-//        if (tm.getValueAt(row, 3).getClass().getSimpleName() == "String") {
-//            System.out.println("birth date: " + tm.getValueAt(row, 3));
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-//            birthDate = LocalDate.parse((String) tm.getValueAt(row, 3), formatter);
-//        } else {
-//            System.out.println("date: " + tm.getValueAt(row, 3));
-//            birthDate = (LocalDate) tm.getValueAt(row, 3);
-//        }
-//        ZoneId systemTimeZone = ZoneId.systemDefault();
-//        ZonedDateTime zonedDateTime = birthDate.atStartOfDay(systemTimeZone);
-//        Date utilDate = Date.from(zonedDateTime.toInstant());
+        String bloodType = (String) tm.getValueAt(row, 3);
+        String gender = (String) tm.getValueAt(row, 4);
+        String address = (String) tm.getValueAt(row, 5);
+        Patient updated = new Patient();
         
-        String bloodType = (String) tm.getValueAt(row, 4);
-        String gender = (String) tm.getValueAt(row, 5);
-        String address = (String) tm.getValueAt(row, 6);
-        Patient updated = new Patient(patientNumber, name, birthDate, bloodType, gender, address);
+        updated.setName(name);
+        updated.setBirthDate(birthDate);
+        updated.setBloodType(bloodType);
+        updated.setGender(gender);
+        updated.setAddress(address);
         updated.setId(id);
         this.patientService.update(updated);
     }
@@ -492,15 +474,12 @@ public class PasienPanel extends javax.swing.JPanel {
         DefaultTableModel tm = (DefaultTableModel) TablePasien.getModel();
         tm.setRowCount(0);
         try {
-//            ManagePatient mp = new ManagePatient();
-//            DateFormat df = new SimpleDateFormat("MMM dd, yyyy");
             for (Iterator iterator = this.patientService.findAll().iterator(); iterator.hasNext();) {
                 Patient next = (Patient) iterator.next();
                 Object o[] = {
                     next.getId(),
                     next.getPatientNumber(),
                     next.getName(),
-//                    df.format(next.getBirthDate()),
                     next.getBirthDate(),
                     next.getBloodType(),
                     next.getGender(),
@@ -533,14 +512,12 @@ public class PasienPanel extends javax.swing.JPanel {
     private javax.swing.JPanel InputGroup;
     private javax.swing.JRadioButton ManRadio;
     private javax.swing.JTextField NameField;
-    private javax.swing.JTextField NoPatientField;
     private javax.swing.JButton Refresh;
     private javax.swing.JButton Remove;
     private javax.swing.JButton ResetForm;
     private javax.swing.JTable TablePasien;
     private javax.swing.JPanel TableWrapper;
     private javax.swing.JRadioButton WomenRadio;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
