@@ -87,7 +87,6 @@ public class LaporanPanel extends javax.swing.JPanel {
             JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
             JasperPrint jasPri = JasperFillManager.fillReport(jasRep, params, conn.connect());
             JasperViewer.viewReport(jasPri, false);
-
         } catch (Exception e) {
             System.out.println("err: " + e.getMessage());
         }

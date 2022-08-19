@@ -49,18 +49,18 @@ public class DoctorServiceImpl implements ICrudService<Doctor>, IFindByEmailServ
             dokter.setStrNumber(p.getStrNumber());
             dokter.setBirthDate(p.getBirthDate());
             dokter.setAddress(p.getAddress());
-//            dokter.setSpecialization(p.getSpecialization());
+            dokter.setSpecializeDoctorId(p.getSpecializeDoctorId());
             dokter.setGender(p.getGender());
             if (p.getPassword() != null) {
                 dokter.setPassword(p.getPassword());
             }
             session.save(dokter);
             tx.commit();
+            return true;
         } catch (HibernateException e) {
             System.err.println("Gagal");
             e.printStackTrace();
             tx.rollback();
-            return false;
         } finally {
             session.close();
         }

@@ -219,14 +219,12 @@ public class DokterPanel extends javax.swing.JPanel {
                         .addComponent(StrField, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FormsLayout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 2, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(GenderSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(GenderSelect, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)))
                 .addGroup(FormsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FormsLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
@@ -430,13 +428,12 @@ public class DokterPanel extends javax.swing.JPanel {
         }
         
         if (isSaved) {
-            refreshTable();
             resetForm();
             JOptionPane.showMessageDialog(this, "Berhasil disimpan!");
         } else {
             JOptionPane.showMessageDialog(this, "Gagal disimpan!");
         }
-        
+        refreshTable();
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void resetForm() {
@@ -447,6 +444,7 @@ public class DokterPanel extends javax.swing.JPanel {
         GenderSelect.setSelectedIndex(0);
         SpecializationSelect.setSelectedIndex(0);
         EmailInput.setText("");
+        PhoneField.setText("");
         PasswordInput.setText("");
         PasswordCheck.setSelected(false);
         this.editedId = "";
