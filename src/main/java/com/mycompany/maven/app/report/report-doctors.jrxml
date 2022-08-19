@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6d4f0cd1-c4a5-4ce3-a9ec-0f564447bd14">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportDoctor" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6d4f0cd1-c4a5-4ce3-a9ec-0f564447bd14">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="179"/>
+	<property name="ireport.x" value="151"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
@@ -13,6 +13,7 @@
 			<style mode="Opaque" backcolor="#F0EFEF"/>
 		</conditionalStyle>
 	</style>
+	<parameter name="username" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[select
 str_number,
@@ -52,7 +53,7 @@ doctors]]>
 	<title>
 		<band height="102" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="721" height="66" backcolor="#000000" uuid="2c2c9a42-85bb-4fa7-816b-694249c28d5c"/>
+				<reportElement mode="Opaque" x="0" y="0" width="802" height="66" backcolor="#000000" uuid="2c2c9a42-85bb-4fa7-816b-694249c28d5c"/>
 				<staticText>
 					<reportElement style="Title" x="0" y="0" width="452" height="66" uuid="419f3644-3ec7-4eb3-9669-19685d265bca"/>
 					<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4"/>
@@ -68,9 +69,13 @@ doctors]]>
 					</textElement>
 					<text><![CDATA[Klinik Erni]]></text>
 				</staticText>
+				<image>
+					<reportElement x="720" y="0" width="82" height="66" uuid="d8d371a7-4e36-47a7-8e77-edaf2b264cac"/>
+					<imageExpression><![CDATA["/Users/mac/NetBeansProjects/klinik-erni-app/src/main/java/com/mycompany/maven/app/report/klinik-erni.png"]]></imageExpression>
+				</image>
 			</frame>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="70" width="721" height="32" forecolor="#000000" backcolor="#CC0000" uuid="598a3432-ed0d-477f-8a28-284785392543"/>
+				<reportElement mode="Opaque" x="0" y="70" width="802" height="32" forecolor="#000000" backcolor="#CC0000" uuid="598a3432-ed0d-477f-8a28-284785392543"/>
 				<textField pattern="EEEEE dd MMMMM yyyy">
 					<reportElement x="553" y="12" width="144" height="20" forecolor="#FFFFFF" uuid="46b8ec37-6d87-4169-ba22-616d5b33f598"/>
 					<textElement textAlignment="Right">
@@ -204,7 +209,7 @@ doctors]]>
 		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="25" splitType="Stretch">
+		<band height="112" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="802" height="25" forecolor="#D0B48E" backcolor="#000000" uuid="5dd40cb7-7482-4205-93f5-83faeb12101e"/>
 				<textField evaluationTime="Report">
@@ -229,6 +234,11 @@ doctors]]>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>
+			<textField>
+				<reportElement x="702" y="92" width="100" height="20" uuid="1dccf78e-fbb1-4df0-98e3-f765fda418c5"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{username}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 	<summary>

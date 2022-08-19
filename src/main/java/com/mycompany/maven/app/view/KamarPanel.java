@@ -12,7 +12,7 @@ import com.mycompany.maven.app.util.ComboItem;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
-import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.Koneksi;
 import com.mycompany.maven.app.model.BookedRoom;
 import com.mycompany.maven.app.model.Patient;
 import com.mycompany.maven.app.model.Room;
@@ -50,7 +50,7 @@ public class KamarPanel extends javax.swing.JPanel {
      */
     
     private String editId = "";
-    private Connection conn = new koneksi().connect();
+    private Connection conn = new Koneksi().connect();
     private DefaultTableModel tabmode;
     public Date tgl_masuk,tgl_keluar;
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -441,7 +441,7 @@ public class KamarPanel extends javax.swing.JPanel {
         Map<String, Object> kode = new HashMap<String, Object>();
         File report = new File(filename);
         try {
-            koneksi conn = new koneksi();
+            Koneksi conn = new Koneksi();
             JasperDesign jasDes = JRXmlLoader.load(report);
             JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
             JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());

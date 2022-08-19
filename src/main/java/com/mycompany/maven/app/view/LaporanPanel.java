@@ -5,7 +5,7 @@
  */
 package com.mycompany.maven.app.view;
 
-import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.Koneksi;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.File;
@@ -25,11 +25,13 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class LaporanPanel extends javax.swing.JPanel {
 
+    private final MainFrame mainFrame;
     /**
      * Creates new form LaporanPanel
      */
-    public LaporanPanel() {
+    public LaporanPanel(MainFrame mainFrame) {
         initComponents();
+        this.mainFrame = mainFrame;
     }
 
     /**
@@ -70,18 +72,20 @@ public class LaporanPanel extends javax.swing.JPanel {
 
     private void PrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PrintActionPerformed
         // TODO add your handling code here:
+        System.out.println("username: " + mainFrame.getAuthentication().getName());
         String filename = System.getProperty("user.dir") + File.separator + 
                 "src" + File.separator + "main" + File.separator + "java" +
                 File.separator + "com" + File.separator + "mycompany" + File.separator +
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
                 "report-income.jrxml";
-        Map<String, Object> kode = new HashMap<String, Object>();
+        Map params = new HashMap();
+        params.put("username", mainFrame.getAuthentication().getName());
         File report = new File(filename);
         try {
-            koneksi conn = new koneksi();
+            Koneksi conn = new Koneksi();
             JasperDesign jasDes = JRXmlLoader.load(report);
             JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
-            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());
+            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, params, conn.connect());
             JasperViewer.viewReport(jasPri, false);
 
         } catch (Exception e) {

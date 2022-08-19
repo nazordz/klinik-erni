@@ -9,11 +9,21 @@ import com.mycompany.maven.app.enumeration.MedicineUse;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.Koneksi;
 import com.mycompany.maven.app.model.Medicine;
 import com.mycompany.maven.app.service.MedicineServiceImpl;
 import com.mycompany.maven.app.util.MedicineUtil;
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import org.hibernate.HibernateException;
 
 /**
@@ -21,19 +31,21 @@ import org.hibernate.HibernateException;
  * @author mac
  */
 public final class ObatPanel extends javax.swing.JPanel {
-    private final Connection conn = new koneksi().connect();
+    private final Connection conn = new Koneksi().connect();
     private DefaultTableModel tabmode;
     private MedicineServiceImpl medicineService;
     private String selectedId;
+    private MainFrame mainFrame;
 
     /**
      * Creates new form ObatPanel
      */
-    public ObatPanel() {
+    public ObatPanel(MainFrame mainFrame) {
         this.medicineService = new MedicineServiceImpl();
         initComponents();
         datatable();
         tabelobat.removeColumn(tabelobat.getColumnModel().getColumn(0));
+        this.mainFrame = mainFrame;
     }
     protected void aktif(){
         tnama.setEnabled(true);
@@ -340,6 +352,24 @@ public final class ObatPanel extends javax.swing.JPanel {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
+        String filename = System.getProperty("user.dir") + File.separator + 
+                "src" + File.separator + "main" + File.separator + "java" +
+                File.separator + "com" + File.separator + "mycompany" + File.separator +
+                "maven" + File.separator + "app" + File.separator + "report" + File.separator +
+                "report-medicine.jrxml";
+        Map<String, Object> kode = new HashMap<String, Object>();
+        kode.put("USERNAME", mainFrame.getAuthentication().getName());
+        File report = new File(filename);
+        try {
+            Koneksi conn = new Koneksi();
+            JasperDesign jasDes = JRXmlLoader.load(report);
+            JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
+            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());
+            JasperViewer.viewReport(jasPri, false);
+
+        } catch (Exception e) {
+            System.out.println("err: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void BottomMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BottomMouseClicked

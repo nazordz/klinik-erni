@@ -6,7 +6,7 @@
 package com.mycompany.maven.app.view;
 
 import com.mycompany.maven.app.enumeration.GenderType;
-import com.mycompany.maven.app.koneksi;
+import com.mycompany.maven.app.Koneksi;
 import com.mycompany.maven.app.model.Doctor;
 import com.mycompany.maven.app.model.SpecializeDoctor;
 import com.mycompany.maven.app.service.DoctorServiceImpl;
@@ -491,9 +491,10 @@ public class DokterPanel extends javax.swing.JPanel {
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
                 "report-doctors.jrxml";
         Map<String, Object> kode = new HashMap<String, Object>();
+        kode.put("username", mainFrame.getAuthentication().getName());
         File report = new File(filename);
         try {
-            koneksi conn = new koneksi();
+            Koneksi conn = new Koneksi();
             JasperDesign jasDes = JRXmlLoader.load(report);
             JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
             JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());

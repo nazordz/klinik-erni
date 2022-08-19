@@ -5,6 +5,7 @@
  */
 package com.mycompany.maven.app.view;
 
+import com.mycompany.maven.app.Koneksi;
 import com.mycompany.maven.app.model.Patient;
 import com.mycompany.maven.app.service.PatientServiceImpl;
 import java.util.Calendar;
@@ -16,6 +17,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.table.TableColumn;
 import com.mycompany.maven.app.util.DateCellRenderer;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 /**
  *
  * @author mac
@@ -24,13 +35,13 @@ public class PasienPanel extends javax.swing.JPanel {
     
     private final PatientServiceImpl patientService;
     private String editedId = "";
-    private final MainFrame MainFrame;
+    private final MainFrame mainFrame;
     /**
      * Creates new form PasienPanel
      */
     public PasienPanel(MainFrame frame, PatientServiceImpl patientService) {
         initComponents();
-        this.MainFrame = frame;
+        this.mainFrame = frame;
         this.patientService = patientService;
         getDataTable();
     }
@@ -62,7 +73,7 @@ public class PasienPanel extends javax.swing.JPanel {
         ButtonGroup = new javax.swing.JPanel();
         ResetForm = new javax.swing.JButton();
         Refresh = new javax.swing.JButton();
-        Checkup = new javax.swing.JButton();
+        PrintBtn = new javax.swing.JButton();
         Remove = new javax.swing.JButton();
         Add = new javax.swing.JButton();
         TableWrapper = new javax.swing.JPanel();
@@ -172,11 +183,10 @@ public class PasienPanel extends javax.swing.JPanel {
                             .addComponent(ManRadio)
                             .addComponent(WomenRadio)
                             .addComponent(jLabel5))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(InputGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         Form.add(InputGroup, java.awt.BorderLayout.PAGE_START);
@@ -199,14 +209,13 @@ public class PasienPanel extends javax.swing.JPanel {
         });
         ButtonGroup.add(Refresh);
 
-        Checkup.setText("Chekup Pasien");
-        Checkup.setVisible(false);
-        Checkup.addActionListener(new java.awt.event.ActionListener() {
+        PrintBtn.setText("Cetak");
+        PrintBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CheckupActionPerformed(evt);
+                PrintBtnActionPerformed(evt);
             }
         });
-        ButtonGroup.add(Checkup);
+        ButtonGroup.add(PrintBtn);
 
         Remove.setText("Hapus pasien");
         Remove.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -399,7 +408,6 @@ public class PasienPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_RefreshActionPerformed
     public void resetForm() {
         this.Remove.setVisible(false);
-        this.Checkup.setVisible(false);
         this.editedId = "";
         this.NameField.setText("");
         this.DateBirthField.setCalendar(null);
@@ -428,7 +436,6 @@ public class PasienPanel extends javax.swing.JPanel {
         }
         this.AddressField.setText(TablePasien.getModel().getValueAt(TablePasien.getSelectedRow(), 6).toString());
         this.Remove.setVisible(true);
-        this.Checkup.setVisible(true);
     }//GEN-LAST:event_TablePasienMouseClicked
 
     private void NameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NameFieldActionPerformed
@@ -444,10 +451,27 @@ public class PasienPanel extends javax.swing.JPanel {
         resetForm();
     }//GEN-LAST:event_ResetFormActionPerformed
 
-    private void CheckupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckupActionPerformed
+    private void PrintBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PrintBtnActionPerformed
         // TODO add your handling code here:
-        MainFrame.navigate("pasienCheckup");
-    }//GEN-LAST:event_CheckupActionPerformed
+        String filename = System.getProperty("user.dir") + File.separator + 
+                "src" + File.separator + "main" + File.separator + "java" +
+                File.separator + "com" + File.separator + "mycompany" + File.separator +
+                "maven" + File.separator + "app" + File.separator + "report" + File.separator +
+                "report-patient.jrxml";
+        Map<String, Object> kode = new HashMap<String, Object>();
+        kode.put("USERNAME", mainFrame.getAuthentication().getName());
+        File report = new File(filename);
+        try {
+            Koneksi conn = new Koneksi();
+            JasperDesign jasDes = JRXmlLoader.load(report);
+            JasperReport jasRep = JasperCompileManager.compileReport(jasDes);
+            JasperPrint jasPri = JasperFillManager.fillReport(jasRep, kode, conn.connect());
+            JasperViewer.viewReport(jasPri, false);
+
+        } catch (Exception e) {
+            System.out.println("err: " + e.getMessage());
+        }
+    }//GEN-LAST:event_PrintBtnActionPerformed
     
     public void updateTable(int row, int column) {
         DefaultTableModel tm = (DefaultTableModel) TablePasien.getModel();
@@ -506,12 +530,12 @@ public class PasienPanel extends javax.swing.JPanel {
     private javax.swing.JTextArea AddressField;
     private javax.swing.JComboBox<String> BloodTypeField;
     private javax.swing.JPanel ButtonGroup;
-    private javax.swing.JButton Checkup;
     private com.toedter.calendar.JDateChooser DateBirthField;
     private javax.swing.JPanel Form;
     private javax.swing.JPanel InputGroup;
     private javax.swing.JRadioButton ManRadio;
     private javax.swing.JTextField NameField;
+    private javax.swing.JButton PrintBtn;
     private javax.swing.JButton Refresh;
     private javax.swing.JButton Remove;
     private javax.swing.JButton ResetForm;

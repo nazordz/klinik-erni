@@ -944,10 +944,10 @@ public class MainFrame extends javax.swing.JFrame {
         pemeriksaanMenu.setChildren(pemeriksaanChildren);
         menus.add(pemeriksaanMenu);
         
-        menus.add(new Menu("obat", SidebarObat, new ObatPanel()));
+        menus.add(new Menu("obat", SidebarObat, new ObatPanel(this)));
         menus.add(new Menu("kamar", SidebarKamar, new KamarPanel()));
         menus.add(new Menu("antrian", SidebarAntrian, new AntrianPanel()));
-        menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel()));
+        menus.add(new Menu("laporan", SidebarLaporan, new LaporanPanel(this)));
         menus.add(new Menu("resepsionis", SidebarResepsionis, new ResepsionisPanel()));
         menus.add(new Menu("apoteker", SidebarApoteker, new ApotekerPanel()));
         menus.add(new Menu("pimpinan", SidebarPimpinan, new PimpinanPanel()));
