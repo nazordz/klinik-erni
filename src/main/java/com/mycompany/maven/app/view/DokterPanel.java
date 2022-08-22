@@ -17,9 +17,11 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -487,9 +489,11 @@ public class DokterPanel extends javax.swing.JPanel {
                 "src" + File.separator + "main" + File.separator + "java" +
                 File.separator + "com" + File.separator + "mycompany" + File.separator +
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
-                "report-doctors.jrxml";
+                "report-doctor-potrait.jrxml";
         Map<String, Object> kode = new HashMap<String, Object>();
         kode.put("username", mainFrame.getAuthentication().getName());
+        kode.put("role", mainFrame.getAuthentication().getRoleText());
+        kode.put(JRParameter.REPORT_LOCALE, new Locale( "id", "ID" ));
         File report = new File(filename);
         try {
             Koneksi conn = new Koneksi();

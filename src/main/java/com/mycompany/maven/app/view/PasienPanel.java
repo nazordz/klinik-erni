@@ -19,7 +19,9 @@ import javax.swing.table.TableColumn;
 import com.mycompany.maven.app.util.DateCellRenderer;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -459,7 +461,9 @@ public class PasienPanel extends javax.swing.JPanel {
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
                 "report-patient.jrxml";
         Map<String, Object> kode = new HashMap<String, Object>();
-        kode.put("USERNAME", mainFrame.getAuthentication().getName());
+        kode.put("username", mainFrame.getAuthentication().getName());
+        kode.put("role", mainFrame.getAuthentication().getRoleText());
+        kode.put(JRParameter.REPORT_LOCALE, new Locale( "id", "ID" ));
         File report = new File(filename);
         try {
             Koneksi conn = new Koneksi();
@@ -513,7 +517,6 @@ public class PasienPanel extends javax.swing.JPanel {
                 tm.addRow(o);
             }    
         } catch (Exception e) {
-            System.err.println("gakbener");
             System.err.print(e);
         }   
     }

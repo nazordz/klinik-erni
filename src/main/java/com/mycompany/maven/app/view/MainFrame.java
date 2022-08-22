@@ -920,10 +920,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         PasienPanel pasienPanel = new PasienPanel(this, patientService);
         Menu pasienMenu = new Menu("pasien", SidebarPasien, pasienPanel);
-        PasienCheckupDoctorPanel pasienCheck = new PasienCheckupDoctorPanel(this, pasienPanel, patientCheckupService, doctorService, patientService);
-        Menu pasienCheckup = new Menu("pasienCheckup", null, pasienCheck);
         ArrayList<Menu> pasienChildren = new ArrayList();
-        pasienChildren.add(pasienCheckup);
         pasienMenu.setChildren(pasienChildren);
         menus.add(pasienMenu);
         

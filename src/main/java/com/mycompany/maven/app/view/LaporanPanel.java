@@ -10,8 +10,10 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -72,14 +74,15 @@ public class LaporanPanel extends javax.swing.JPanel {
 
     private void PrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PrintActionPerformed
         // TODO add your handling code here:
-        System.out.println("username: " + mainFrame.getAuthentication().getName());
         String filename = System.getProperty("user.dir") + File.separator + 
                 "src" + File.separator + "main" + File.separator + "java" +
                 File.separator + "com" + File.separator + "mycompany" + File.separator +
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
-                "report-income.jrxml";
+                "report-income-potrait.jrxml";
         Map params = new HashMap();
         params.put("username", mainFrame.getAuthentication().getName());
+        params.put("role", mainFrame.getAuthentication().getRoleText());
+        params.put(JRParameter.REPORT_LOCALE, new Locale( "id", "ID" ));
         File report = new File(filename);
         try {
             Koneksi conn = new Koneksi();

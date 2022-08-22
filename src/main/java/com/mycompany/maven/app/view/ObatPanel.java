@@ -16,7 +16,9 @@ import com.mycompany.maven.app.util.MedicineUtil;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -358,7 +360,9 @@ public final class ObatPanel extends javax.swing.JPanel {
                 "maven" + File.separator + "app" + File.separator + "report" + File.separator +
                 "report-medicine.jrxml";
         Map<String, Object> kode = new HashMap<String, Object>();
-        kode.put("USERNAME", mainFrame.getAuthentication().getName());
+        kode.put("username", mainFrame.getAuthentication().getName());
+        kode.put("role", mainFrame.getAuthentication().getRoleText());
+        kode.put(JRParameter.REPORT_LOCALE, new Locale( "id", "ID" ));
         File report = new File(filename);
         try {
             Koneksi conn = new Koneksi();

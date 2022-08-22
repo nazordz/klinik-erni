@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="90e83acb-c96a-43d6-8bea-63ce51618d24">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PatientReport" language="groovy" pageWidth="595" pageHeight="842" columnWidth="529" leftMargin="33" rightMargin="33" topMargin="21" bottomMargin="21" uuid="90e83acb-c96a-43d6-8bea-63ce51618d24">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -13,7 +13,8 @@
 			<style mode="Opaque" backcolor="#F0EFEF"/>
 		</conditionalStyle>
 	</style>
-	<parameter name="USERNAME" class="java.lang.String"/>
+	<parameter name="username" class="java.lang.String"/>
+	<parameter name="role" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT 
 	p.patient_number,
@@ -38,9 +39,9 @@ where p.is_deleted is not null;]]>
 	<title>
 		<band height="132" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="95" backcolor="#000000" uuid="23ad72b5-2872-41b4-929c-d0668ce64bc7"/>
+				<reportElement mode="Opaque" x="0" y="0" width="450" height="95" backcolor="#000000" uuid="23ad72b5-2872-41b4-929c-d0668ce64bc7"/>
 				<staticText>
-					<reportElement style="Title" x="0" y="0" width="431" height="66" uuid="38e94459-20e6-4d35-b081-9bc8a3462105"/>
+					<reportElement style="Title" x="0" y="0" width="425" height="66" uuid="38e94459-20e6-4d35-b081-9bc8a3462105"/>
 					<textElement>
 						<font isBold="false"/>
 					</textElement>
@@ -53,21 +54,28 @@ where p.is_deleted is not null;]]>
 					</textElement>
 					<text><![CDATA[Daftar Pasien]]></text>
 				</staticText>
-				<image>
-					<reportElement x="453" y="0" width="100" height="95" uuid="09248b42-d4aa-4592-b559-0e90e458a939"/>
-					<imageExpression><![CDATA["/Users/mac/NetBeansProjects/klinik-erni-app/src/main/java/com/mycompany/maven/app/report/klinik-erni.png"]]></imageExpression>
-				</image>
 			</frame>
 			<frame>
-				<reportElement mode="Opaque" x="0" y="100" width="555" height="32" forecolor="#000000" backcolor="#CC0000" uuid="86e40134-95dd-4580-abe5-292b625ba59b"/>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement x="411" y="12" width="144" height="20" forecolor="#FFFFFF" uuid="c79e3e03-cc3e-4f7a-abd4-8be7b827eab1"/>
-					<textElement textAlignment="Right">
-						<font size="12"/>
+				<reportElement mode="Opaque" x="0" y="100" width="529" height="32" forecolor="#000000" backcolor="#CC0000" uuid="86e40134-95dd-4580-abe5-292b625ba59b"/>
+				<textField>
+					<reportElement style="Column header" x="409" y="12" width="80" height="20" forecolor="#FFFFFF" uuid="567de08c-157f-40ca-9316-1a9fc1928fe4"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="489" y="12" width="40" height="20" forecolor="#FFFFFF" uuid="287b130e-7815-4dea-b3ef-3accc22b0b1f"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 			</frame>
+			<image>
+				<reportElement x="450" y="0" width="79" height="95" uuid="09248b42-d4aa-4592-b559-0e90e458a939"/>
+				<imageExpression><![CDATA["/Users/mac/NetBeansProjects/klinik-erni-app/src/main/java/com/mycompany/maven/app/report/klinik-erni.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -97,7 +105,7 @@ where p.is_deleted is not null;]]>
 				<text><![CDATA[Tanggal Lahir]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="414" y="7" width="138" height="18" forecolor="#000000" uuid="79abd081-de02-4c27-99b6-86faa5c08fff"/>
+				<reportElement style="Column header" x="414" y="7" width="115" height="18" forecolor="#000000" uuid="79abd081-de02-4c27-99b6-86faa5c08fff"/>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
@@ -108,7 +116,7 @@ where p.is_deleted is not null;]]>
 	<detail>
 		<band height="18" splitType="Stretch">
 			<frame>
-				<reportElement style="Row" mode="Opaque" x="0" y="0" width="555" height="18" uuid="4e161fec-b933-4ac9-ae32-c4e7328a94f8"/>
+				<reportElement style="Row" mode="Opaque" x="0" y="0" width="529" height="18" uuid="4e161fec-b933-4ac9-ae32-c4e7328a94f8"/>
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" positionType="Float" x="0" y="0" width="138" height="18" uuid="19bfec40-0531-4da4-a029-c298875a215b"/>
 					<textElement>
@@ -131,7 +139,7 @@ where p.is_deleted is not null;]]>
 					<textFieldExpression><![CDATA[$F{bith_date}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true">
-					<reportElement style="Detail" positionType="Float" x="414" y="0" width="138" height="18" uuid="9d9522f3-7888-4fc3-a502-2eee08309a90"/>
+					<reportElement style="Detail" positionType="Float" x="414" y="0" width="115" height="18" uuid="9d9522f3-7888-4fc3-a502-2eee08309a90"/>
 					<textElement>
 						<font size="14"/>
 					</textElement>
@@ -143,7 +151,7 @@ where p.is_deleted is not null;]]>
 	<columnFooter>
 		<band height="7" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="5942ccb9-cc2d-49e8-b686-a43c4f0227f6"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="529" height="1" uuid="5942ccb9-cc2d-49e8-b686-a43c4f0227f6"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -152,35 +160,34 @@ where p.is_deleted is not null;]]>
 	</columnFooter>
 	<pageFooter>
 		<band height="94" splitType="Stretch">
-			<frame>
-				<reportElement mode="Opaque" x="0" y="1" width="555" height="24" forecolor="#D0B48E" backcolor="#000000" uuid="761ad735-8c2e-480e-8819-f821fe7dfa09"/>
-				<textField evaluationTime="Report">
-					<reportElement style="Column header" x="513" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="287b130e-7815-4dea-b3ef-3accc22b0b1f"/>
-					<textElement verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement style="Column header" x="433" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="567de08c-157f-40ca-9316-1a9fc1928fe4"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-				</textField>
-				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement style="Column header" x="2" y="1" width="197" height="20" forecolor="#FFFFFF" uuid="3401491c-5e7d-4ea7-bef3-47c0dea97b29"/>
-					<textElement verticalAlignment="Middle">
-						<font size="10" isBold="false"/>
-					</textElement>
-					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-				</textField>
-			</frame>
 			<textField>
-				<reportElement x="451" y="74" width="100" height="20" uuid="f7b48bba-51fd-499e-bda5-2242cb997425"/>
-				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$P{USERNAME}]]></textFieldExpression>
+				<reportElement x="429" y="74" width="100" height="20" uuid="f7b48bba-51fd-499e-bda5-2242cb997425"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{username}]]></textFieldExpression>
 			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="425" y="0" width="104" height="20" forecolor="#000000" uuid="3401491c-5e7d-4ea7-bef3-47c0dea97b29"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="429" y="20" width="100" height="20" uuid="74eb570c-a1f8-4d59-b9c5-effa0e621c5d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{role}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="392" y="4" width="31" height="17" uuid="9e64fbda-7ee3-42eb-92cf-e4b452cd4263"/>
+				<textElement>
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<text><![CDATA[Bekasi,]]></text>
+			</staticText>
 		</band>
 	</pageFooter>
 	<summary>
